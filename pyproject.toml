@@ -9,7 +9,7 @@ description = "Adjacency Run Sort (ARS): a fast run-based sorting algorithm with
 readme = "README.md"
 license = { file = "LICENSE" }
 authors = [
-    { name = "Mohammad Talaat" }
+    { name = "Mohammad T. Ismael" }
 ]
 requires-python = ">=3.10"
 dependencies = []
