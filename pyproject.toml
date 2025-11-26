@@ -1,0 +1,102 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ars"
+version = "0.1.0"
+description = "Adjacency Run Sort (ARS): a fast run-based sorting algorithm with multiple variants."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Mohammad Talaat" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+
+    # Linters / formatters
+    "ruff",
+    "black",
+    "pydoclint",
+
+    # Type checking
+    "mypy",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/tests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ars"]
+
+# -------------------------
+# Ruff
+# -------------------------
+[tool.ruff]
+line-length = 88
+extend-ignore = ["E501"]  # Let Black handle line-length
+
+[tool.ruff.lint]
+select = [
+    "F",  # Pyflakes
+    "E",  # Pycodestyle errors
+    "W",  # Pycodestyle warnings
+    "I",  # Import sorting
+    "N",  # Naming
+    "D",  # Docstring checks
+    "UP", # PyUpgrade
+]
+ignore = [
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in __init__
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# -------------------------
+# Black
+# -------------------------
+[tool.black]
+line-length = 88
+target-version = ["py310", "py311", "py312"]
+
+# -------------------------
+# pydoclint (NumPy Style)
+# -------------------------
+[tool.pydoclint]
+style = "numpy"
+require-return-section = true
+require-raises-section = false
+check-examples = false
+
+# -------------------------
+# mypy
+# -------------------------
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_return_any = true
+ignore_missing_imports = true
+strict_optional = true
+
+# -------------------------------------
+# pytest
+# -------------------------------------
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "--cov=src --cov-report=xml"
