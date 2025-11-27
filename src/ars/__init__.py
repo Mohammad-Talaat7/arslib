@@ -6,11 +6,11 @@ This package contains three variants of the ARS algorithm:
 - ARSAdaptiveSort: Adaptive BST/Skip-list version
 """
 
+from .adaptive.ars_adaptive import ARSAdaptiveSort
+from .bucket.ars_bucket import ARSBucketSort
+
 # Public API imports (empty skeletons for Phase 1)
 from .hash.ars_hash import ARSHashSort
-from .bucket.ars_bucket import ARSBucketSort
-from .adaptive.ars_adaptive import ARSAdaptiveSort
-
 from .version import __version__
 
 __all__ = [

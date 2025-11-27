@@ -8,7 +8,11 @@ LOG_DIR = PROJECT_ROOT / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
 
-def setup_logger(name: str, log_file: str, level: int = logging.INFO) -> logging.Logger:
+def setup_logger(
+    name: str,
+    log_file: str,
+    level: int = logging.INFO,
+) -> logging.Logger:
     """Set up a logger with both file and console handlers (dev-only)."""
     logger = logging.getLogger(f"ars.{name}")
     logger.setLevel(level)
@@ -18,7 +22,7 @@ def setup_logger(name: str, log_file: str, level: int = logging.INFO) -> logging
     )
 
     # File handler
-    file_handler = logging.FileHandler(LOG_DIR / log_file)
+    file_handler = logging.FileHandler(LOG_DIR / log_file, mode="a")
     file_handler.setFormatter(formatter)
 
     # Console handler

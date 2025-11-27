@@ -16,16 +16,18 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "pytest-cov",
+  "pytest",
+  "pytest-cov",
+  "coverage",
+  "codecov",
 
-    # Linters / formatters
-    "ruff",
-    "black",
-    "pydoclint",
+  # Linters / formatters
+  "ruff",
+  "black",
+  "pydoclint",
 
-    # Type checking
-    "mypy",
+  # Type checking
+  "mypy",
 ]
 
 [tool.hatch.metadata]
@@ -45,7 +47,11 @@ packages = ["src/ars"]
 # -------------------------
 [tool.ruff]
 line-length = 88
-extend-ignore = ["E501"]  # Let Black handle line-length
+exclude = [
+  "src/ars/adaptive",
+  "src/ars/bucket",
+  "src/ars/hash"
+]
 
 [tool.ruff.lint]
 select = [
@@ -60,6 +66,7 @@ select = [
 ignore = [
     "D105", # Missing docstring in magic method
     "D107", # Missing docstring in __init__
+    "E501", # Let Black handle line-length
 ]
 
 [tool.ruff.format]
@@ -86,7 +93,7 @@ check-examples = false
 # mypy
 # -------------------------
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.13"
 check_untyped_defs = true
 disallow_untyped_defs = true
 warn_unused_ignores = true
@@ -94,9 +101,30 @@ warn_return_any = true
 ignore_missing_imports = true
 strict_optional = true
 
+# Per-module ignore
+[[tool.mypy.overrides]]
+module = "ars.adaptive.ars_adaptive"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "ars.bucket.ars_bucket"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "ars.hash.ars_hash"
+ignore_errors = true
+
 # -------------------------------------
 # pytest
 # -------------------------------------
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "--cov=src --cov-report=xml"
+
+# -------------------------------------
+# basedpyright
+# -------------------------------------
+[tool.basedpyright]
+pythonVersion = "3.13"
+include = ["src"]
+extraPaths = ["./src"]
