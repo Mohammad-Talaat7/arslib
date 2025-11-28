@@ -13,8 +13,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import Generic, TypeVar
 
-from ars.base.run import Run
-from ars.utils.logger import setup_logger
+from arslib.base.run import Run
+from arslib.utils.logger import setup_logger
 
 T = TypeVar("T")
 

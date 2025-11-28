@@ -18,7 +18,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Generic, TypeVar, override
 
-from ars.utils.logger import setup_logger
+from arslib.utils.logger import setup_logger
 
 logger = setup_logger("Run", "ars_run.log")
 

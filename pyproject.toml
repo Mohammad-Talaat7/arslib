@@ -3,8 +3,8 @@ requires = ["hatchling>=1.24"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ars"
-version = "0.1.0"
+name = "arslib"
+version = "0.3.0"
 description = "Adjacency Run Sort (ARS): a fast run-based sorting algorithm with multiple variants."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -40,7 +40,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ars"]
+packages = ["src/arslib"]
 
 # -------------------------
 # Ruff
@@ -48,9 +48,8 @@ packages = ["src/ars"]
 [tool.ruff]
 line-length = 88
 exclude = [
-  "src/ars/adaptive",
-  "src/ars/bucket",
-  "src/ars/hash"
+  "src/arslib/adaptive",
+  "src/arslib/bucket",
 ]
 
 [tool.ruff.lint]
@@ -103,15 +102,11 @@ strict_optional = true
 
 # Per-module ignore
 [[tool.mypy.overrides]]
-module = "ars.adaptive.ars_adaptive"
+module = "arslib.adaptive.ars_adaptive"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
-module = "ars.bucket.ars_bucket"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "ars.hash.ars_hash"
+module = "arslib.bucket.ars_bucket"
 ignore_errors = true
 
 # -------------------------------------

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import override
 
-from ars.base.base_sorter import BaseSorter
-from ars.base.run import Run
+from arslib.base.base_sorter import BaseSorter
+from arslib.base.run import Run
 
 
 class MockSorter(BaseSorter[int]):

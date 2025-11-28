@@ -1,7 +1,7 @@
-"""Float bucket-based ARS implementation."""
+"""Adaptive ARS using balanced BST or skip list."""
 
 
-class ARSBucketSort:
+class ARSAdaptive:
     """Placeholder implementation for Phase 1."""
 
     def sort(self, data):

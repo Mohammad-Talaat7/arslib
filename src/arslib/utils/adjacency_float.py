@@ -1,7 +1,7 @@
 """Value-to-run adjacency checks for ARS."""
 
-from ars.base.run import Run
-from ars.utils.logger import setup_logger
+from arslib.base.run import Run
+from arslib.utils.logger import setup_logger
 
 logger = setup_logger("AdjFloat", "ars_adjacency_float.log")
 

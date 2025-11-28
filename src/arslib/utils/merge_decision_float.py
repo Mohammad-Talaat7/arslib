@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from ars.base.run import Run
-from ars.utils.adjacency_float import is_adjacent_left_float, is_adjacent_right_float
-from ars.utils.logger import setup_logger
+from arslib.base.run import Run
+from arslib.utils.adjacency_float import is_adjacent_left_float, is_adjacent_right_float
+from arslib.utils.logger import setup_logger
 
 logger = setup_logger("MergeFloat", "ars_merge_decision_float.log")
 

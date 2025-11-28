@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from ars.base.run import Run
-from ars.utils.adjacency_int import is_adjacent_left_int, is_adjacent_right_int
-from ars.utils.logger import setup_logger
+from arslib.base.run import Run
+from arslib.utils.adjacency_int import is_adjacent_left_int, is_adjacent_right_int
+from arslib.utils.logger import setup_logger
 
 logger = setup_logger("MergeInt", "ars_merge_decision_int.log")
 

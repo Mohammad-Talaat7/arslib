@@ -1,7 +1,7 @@
 """Pytest file for testing `src/ars/utils/adjacency_float.py`."""
 
-from ars.base.run import Run
-from ars.utils.adjacency_float import (
+from arslib.base.run import Run
+from arslib.utils.adjacency_float import (
     is_adjacent_left_float,
     is_adjacent_right_float,
     runs_are_adjacent_float,

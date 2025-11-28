@@ -1,6 +1,6 @@
 """Pytest file for testing `src/ars/base/run.py`."""
 
-from ars.base.run import Run
+from arslib.base.run import Run
 
 
 def test_run_creation() -> None:

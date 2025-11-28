@@ -1,7 +1,7 @@
 """Pytest file for testing `src/ars/utils/merge_decision_int.py`."""
 
-from ars.base.run import Run
-from ars.utils.merge_decision_int import merge_decision_int
+from arslib.base.run import Run
+from arslib.utils.merge_decision_int import merge_decision_int
 
 
 def test_merge_left_decision_int() -> None:
