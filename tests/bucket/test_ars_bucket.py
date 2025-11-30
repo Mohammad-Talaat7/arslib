@@ -24,11 +24,19 @@ Covers:
 """
 
 import random
-from collections.abc import Sequence
+from collections.abc import Generator, Sequence
 
 import pytest
 
 from arslib.bucket.ars_bucket import ARSBucket
+
+
+@pytest.fixture(autouse=True)
+def deterministic_seed() -> Generator[None, None, None]:
+    """Ensure deterministic behaviour for tests that use randomness."""
+    random.seed(42)
+    yield
+    random.seed()
 
 
 def assert_sorted_equal(
