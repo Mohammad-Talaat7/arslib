@@ -11,12 +11,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
-from typing import Generic, TypeVar
+from typing import Generic
 
 from arslib.base.run import Run
 from arslib.utils.logger import setup_logger
-
-T = TypeVar("T")
+from arslib.utils.shared_defaults import T
 
 logger = setup_logger("BaseSorter", "ars_base_sorter.log")
 

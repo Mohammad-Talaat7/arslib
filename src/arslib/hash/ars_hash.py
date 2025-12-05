@@ -86,7 +86,7 @@ class ARSHash(BaseSorter[int]):
 
         # Value inside the run -> find global insertion index for sorted order
         global_index = 0
-
+        # TODO:check for num-FLOPs per second to replace with run.insert_sorted
         for block in run.blocks:
             if not block:
                 continue

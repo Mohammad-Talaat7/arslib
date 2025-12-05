@@ -14,15 +14,15 @@ This gives predictable, tunable performance.
 
 from __future__ import annotations
 
+import bisect
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Generic, TypeVar, override
+from typing import Generic, override
 
 from arslib.utils.logger import setup_logger
+from arslib.utils.shared_defaults import T
 
 logger = setup_logger("Run", "ars_run.log")
-
-T = TypeVar("T")
 
 
 @dataclass
@@ -200,6 +200,68 @@ class Run(Generic[T]):
         # keep blocks balanced
         self._maybe_split_block(b_idx)
 
+    def insert_sorted(self, value: T) -> None:
+        """Insert `value` into the run preserving sorted order.
+
+        Strategy:
+        1. Quick checks against start/end.
+        2. Iterate blocks checking block last element to find candidate block.
+        3. Use bisect on the candidate block to insert at the right position.
+        4. Update bounds and size, split block if needed.
+        """
+        if self._size == 0:
+            # Shouldn't happen normally because runs are always non-empty
+            self.blocks = [[value]]
+            self._size = 1
+            self._refresh_bounds()
+            return
+
+        # Fast path: append_right or append_left
+        try:
+            if value >= self.end:
+                self.append_right(value)
+                return
+            if value <= self.start:
+                self.append_left(value)
+                return
+        except TypeError:
+            # If comparisons fail, fallback to linear insert in last block
+            pass
+
+        # Scan blocks to find a block where `value` <= block[-1]
+        for b_idx, block in enumerate(self.blocks):
+            # If value is <= last element of this block, it belongs here
+            try:
+                if value <= block[-1]:
+                    # find insertion point with bisect (works if block is sorted)
+                    pos = bisect.bisect_right(block, value)
+                    block.insert(pos, value)
+                    self._size += 1
+                    # update bounds if we inserted at very left of first block
+                    if b_idx == 0 and pos == 0:
+                        self.start = block[0]
+                    # maybe split
+                    self._maybe_split_block(b_idx)
+                    return
+            except TypeError:
+                # If comparison fails inside block, fall back to naive scanning elements
+                for i, v in enumerate(block):
+                    try:
+                        if value <= v:
+                            block.insert(i, value)
+                            self._size += 1
+                            if b_idx == 0 and i == 0:
+                                self.start = block[0]
+                            self._maybe_split_block(b_idx)
+                            return
+                    except TypeError:
+                        continue
+                # If we didn't find place in this block due to TypeError, continue to next block
+
+        # If we reach here, it means value is greater than all block[-1] (should have matched earlier).
+        # Append to right as safe fallback.
+        self.append_right(value)
+
     # -------------------------
     # Merging operations
     # -------------------------
@@ -239,6 +301,10 @@ class Run(Generic[T]):
         for block in self.blocks:
             out.extend(block)
         return out
+
+    def refresh(self) -> None:
+        """Public wrapper to recompute start/end after external edits."""
+        self._refresh_bounds()
 
     @override
     def __repr__(self) -> str:
