@@ -1,2 +1,2 @@
 # ars
-Adjacency Run Sort (ARS)
+Adaptive Range Sorting (ARS)

@@ -1,10 +1,10 @@
-# ARS: Adjacency Run Sort 🚀
+# ARS: Adaptive Range Sorting 🚀
 
 [![Crates.io](https://img.shields.io/crates/v/arslib.svg)](https://crates.io/crates/arslib)
 [![Documentation](https://docs.rs/arslib/badge.svg)](https://docs.rs/arslib)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 
-`arslib` is a blazing-fast, cache-friendly, and highly parallel sorting library written in Rust. It implements the **Adjacency Run Sort (ARS)** algorithm—specifically the 6th Generation "Aero" Architecture. ARS leverages spatial adjacency, cache-line buffering, and multi-threading to achieve extreme performance on modern CPU architectures.
+`arslib` is a blazing-fast, cache-friendly, and highly parallel sorting library written in Rust. It implements the **Adaptive Range Sorting (ARS)** algorithm—specifically the 6th Generation "Aero" Architecture. ARS leverages spatial adjacency, cache-line buffering, and multi-threading to achieve extreme performance on modern CPU architectures.
 
 ## Features
 
