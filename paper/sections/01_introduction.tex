@@ -28,8 +28,9 @@ ARS Aero achieves substantial speedups on high-entropy and complex-type datasets
  width=0.95\linewidth, height=5.5cm,
  enlarge x limits=0.15,
  ylabel={Speedup vs. PDQsort ($\times$)},
- symbolic x coords={Random, Gaussian, Duplicates, Strings},
+ symbolic x coords={Random, Gaussian, Nearly Sorted, Zipfian, Duplicates, Strings},
  xtick=data,
+ xticklabel style={rotate=20, anchor=north east, font=\footnotesize},
  nodes near coords,
  nodes near coords align={vertical},
  ymin=0, ymax=5.5,
@@ -39,7 +40,7 @@ ARS Aero achieves substantial speedups on high-entropy and complex-type datasets
  label style={font=\small},
  tick label style={font=\small}
 ]
-\addplot coordinates {(Random, 2.39) (Gaussian, 1.78) (Duplicates, 0.93) (Strings, 4.77)};
+\addplot coordinates {(Random, 2.39) (Gaussian, 1.78) (Nearly Sorted, 2.45) (Zipfian, 0.58) (Duplicates, 0.93) (Strings, 4.77)};
 \end{axis}
 \end{tikzpicture}
 \caption{The "Spatial Advantage": ARS Aero Speedup across diverse data domains ($N=10^7$) on i64 datatype and random strings. The framework demonstrates significant gains in high-entropy and complex-type sorting while maintaining competitive parity on low-entropy duplicates.}
