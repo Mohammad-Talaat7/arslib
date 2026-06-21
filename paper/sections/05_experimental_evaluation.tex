@@ -3,10 +3,10 @@
 \subsection{Evaluation Goals}
 Our experimental evaluation investigates ARS across four primary dimensions, represented by the following Research Questions (RQs):
 \begin{itemize}
-    \item \textbf{RQ1 (Throughput and Scaling)}: How does ARS scale throughput under various data sizes?
-    \item \textbf{RQ2 (Distribution Resilience)}: Does the Aero architecture successfully maintain performance on non-uniform and adversarial data distributions?
-    \item \textbf{RQ3 (Hardware Interaction)}: What is the micro-architectural efficiency gained with respect to memory hierarchy behavior and branch reduction?
-    \item \textbf{RQ4 (Streaming Ingestion)}: Can the Epoch-based architecture maintain bounded-latency ingestion under continuous workloads?
+ \item \textbf{RQ1 (Throughput and Scaling)}: How does ARS scale throughput under various data sizes?
+ \item \textbf{RQ2 (Distribution Resilience)}: Does the Aero architecture successfully maintain performance on non-uniform and adversarial data distributions?
+ \item \textbf{RQ3 (Hardware Interaction)}: What is the micro-architectural efficiency gained with respect to memory hierarchy behavior and branch reduction?
+ \item \textbf{RQ4 (Streaming Ingestion)}: Can the Epoch-based architecture maintain bounded-latency ingestion under continuous workloads?
 \end{itemize}
 This evaluation does not aim to demonstrate universal superiority, but rather to analyze the performance envelope of the ARS framework.
 We seek to identify the architectural boundaries where hardware-aligned spatial mapping outpaces comparison-driven partitioning.
@@ -25,10 +25,10 @@ Evaluated algorithms were implemented in Rust 1.75 and compiled with the \texttt
 
 We also utilized a statistical methodology to isolate algorithmic performance:
 \begin{enumerate}
-    \item \textbf{Statistical Variance}: For every algorithm-distribution pair $(A, D)$, we performed 10 independent repetitions. We report the median execution time to filter out non-deterministic system noise (e.g., context switches) while minimum execution time is included for reference. To assess stability, we also report the coefficient of variation for all primary benchmarks.
-    \item \textbf{Warmup and Cache State}: Each timed run was preceded by 3 warmup iterations to ensure the instruction cache and branch prediction tables were in a hot state.
-    \item \textbf{Deterministic Generation}: Data was generated using the \texttt{ChaCha8} CSPRNG with a fixed seed (Seed=42), ensuring that all algorithms were evaluated on identical bit-level sequences.
-    \item \textbf{Compiler Safety}: All results were wrapped in \texttt{std::hint::black\_box} to prevent Dead-Code Elimination (DCE).
+ \item \textbf{Statistical Variance}: For every algorithm-distribution pair $(A, D)$, we performed 10 independent repetitions. We report the median execution time to filter out non-deterministic system noise (e.g., context switches) while minimum execution time is included for reference. To assess stability, we also report the coefficient of variation for all primary benchmarks.
+ \item \textbf{Warmup and Cache State}: Each timed run was preceded by 3 warmup iterations to ensure the instruction cache and branch prediction tables were in a hot state.
+ \item \textbf{Deterministic Generation}: Data was generated using the \texttt{ChaCha8} CSPRNG with a fixed seed (Seed=42), ensuring that all algorithms were evaluated on identical bit-level sequences.
+ \item \textbf{Compiler Safety}: All results were wrapped in \texttt{std::hint::black\_box} to prevent Dead-Code Elimination (DCE).
 \end{enumerate}
 
 \subsection{Benchmark Methodology}
@@ -41,11 +41,11 @@ ARS was evaluated against several representative sorting baselines:
 
 To characterize the ARS framework, we utilized a diverse suite of benchmarks representing both theoretical models and real-world data structures:
  \begin{enumerate}
-   \item \textbf{Random (\textit{Uniform})}: Elements are drawn from a discrete uniform distribution $\mathbb{U}(0, 2^{64}-1)$. This provides a high-entropy baseline where keys are evenly distributed across the $B$ spatial bins, representing the ideal case for range partitioning.
-   \item \textbf{Gaussian (\textit{Skewed})}: Elements follow a normal distribution $\mathcal{N}(\mu, \sigma^2)$, with $\mu = 2^{63}$ and $\sigma$ tuned to create a sharp peak in the key space. This workload evaluates the efficacy of the \textbf{Aero architecture's} quantile table in preventing "bin-congestion" at the distribution's center.
-   \item \textbf{Zipfian (\textit{Power-law})}: Keys are distributed according to a Zipf-Mandelbrot law, where a small subset of "Heavy Hitter" keys account for the majority of the dataset. This represents a pathological stress case for spatial mapping, testing the algorithm's robustness against extreme skew.
-   \item \textbf{Nearly Sorted}: An ordered sequence where 5\% of the elements are displaced via a small stochastic perturbation. This tests the ARS "Analysis Pass" and its ability to detect pre-existing order to minimize unnecessary data movement.
-   \item \textbf{Duplicates (\textit{Clustered})}: A low-cardinality dataset where elements are restricted to a small number of unique clusters ($N_{unique} \ll N$). This tests the "Bucket Collapse" threshold and the overhead of intra-bin refinement on redundant data.
+ \item \textbf{Random (\textit{Uniform})}: Elements are drawn from a discrete uniform distribution $\mathbb{U}(0, 2^{64}-1)$. This provides a high-entropy baseline where keys are evenly distributed across the $B$ spatial bins, representing the ideal case for range partitioning.
+ \item \textbf{Gaussian (\textit{Skewed})}: Elements follow a normal distribution $\mathcal{N}(\mu, \sigma^2)$, with $\mu = 2^{63}$ and $\sigma$ tuned to create a sharp peak in the key space. This workload evaluates the efficacy of the \textbf{Aero architecture's} quantile table in preventing "bin-congestion" at the distribution's center.
+ \item \textbf{Zipfian (\textit{Power-law})}: Keys are distributed according to a Zipf-Mandelbrot law, where a small subset of "Heavy Hitter" keys account for the majority of the dataset. This represents a pathological stress case for spatial mapping, testing the algorithm's robustness against extreme skew.
+ \item \textbf{Nearly Sorted}: An ordered sequence where 5\% of the elements are displaced via a small stochastic perturbation. This tests the ARS "Analysis Pass" and its ability to detect pre-existing order to minimize unnecessary data movement.
+ \item \textbf{Duplicates (\textit{Clustered})}: A low-cardinality dataset where elements are restricted to a small number of unique clusters ($N_{unique} \ll N$). This tests the "Bucket Collapse" threshold and the overhead of intra-bin refinement on redundant data.
 \end{enumerate}
 Datasets sizes ranged from $10^3$ to $10^8$ depending on workload characteristics and memory requirements to test scalability between evaluated algorithms.
 
@@ -53,8 +53,8 @@ Datasets sizes ranged from $10^3$ to $10^8$ depending on workload characteristic
 \cref{fig:evolution} illustrates the execution-time evolution of the ARS lineage relative to PDQsort across increasing dataset scales.
 
 The transition from recursive tree-based structures toward flat-array spatial classification pipelines significantly improved scalability behavior.
-Gen 3 introduced contention-free parallel scatter partitioning, while Gen 5 reduced memory traversal overhead through fused analysis passes.
-Aero (Gen 6) further stabilized throughput under skewed distributions through quantile-adaptive classification.
+Apex Baseline introduced contention-free parallel scatter partitioning, while Apex Optimized reduced memory traversal overhead through fused analysis passes.
+Aero architecture further stabilized throughput under skewed distributions through quantile-adaptive classification.
 
 Across large random integer workloads, ARS Aero demonstrated consistent near-linear throughput scaling while maintaining competitive execution times relative to state-of-the-art parallel sorters which can be observed in \cref{fig:sub_dist} which showcase the ARS Aero framework behavior against PDQsort under different data distributions.
 
@@ -68,18 +68,18 @@ Under these conditions, the fixed-cost classification pipeline allowed ARS to su
 \begin{tikzpicture}
 \begin{axis}
 [
-    ybar=1pt,
-    width=\linewidth, height=5cm,
-    enlarge x limits=0.2,
-    legend style={at={(0.5,1.18)}, anchor=north, legend columns=-1, nodes={scale=0.7, transform shape}},
-    ylabel={Execution Time (ms)},
-    symbolic x coords={Random, Gaussian, Duplicates},
-    xtick=data,
-    xticklabel style={font=\small},
-    nodes near coords,
-    every node near coord/.append style={font=\fontsize{4}{5}\selectfont, rotate=90, anchor=west},
-    bar width=5pt,
-    ymin=0, ymax=300
+ ybar=1pt,
+ width=\linewidth, height=5cm,
+ enlarge x limits=0.2,
+ legend style={at={(0.5,1.18)}, anchor=north, legend columns=-1, nodes={scale=0.7, transform shape}},
+ ylabel={Execution Time (ms)},
+ symbolic x coords={Random, Gaussian, Duplicates},
+ xtick=data,
+ xticklabel style={font=\small},
+ nodes near coords,
+ every node near coord/.append style={font=\fontsize{4}{5}\selectfont, rotate=90, anchor=west},
+ bar width=5pt,
+ ymin=0, ymax=300
 ]
 \addplot[fill=red!60] coordinates {(Random,262.47) (Gaussian,157.36) (Duplicates,56.57)}; \addlegendentry{PDQsort}
 \addplot[fill=blue!60] coordinates {(Random,114.43) (Gaussian,90.93) (Duplicates,35.91)}; \addlegendentry{IPS4o}
@@ -95,24 +95,24 @@ Under these conditions, the fixed-cost classification pipeline allowed ARS to su
 \begin{tikzpicture}
 \begin{axis}
 [
-    width=\linewidth, height=5cm,
-    ylabel={Execution Time (ms)},
-    symbolic x coords={Random, Gaussian, NearlySorted, Duplicates, Zipfian},
-    xtick=data,
-    xticklabel style={rotate=20, anchor=north east, font=\footnotesize},
-    ymajorgrids=true,
-    legend pos=north east,
-    legend style={nodes={scale=0.7, transform shape}},
-    ymin=0, ymax=350
+ width=\linewidth, height=5cm,
+ ylabel={Execution Time (ms)},
+ symbolic x coords={Random, Gaussian, NearlySorted, Duplicates, Zipfian},
+ xtick=data,
+ xticklabel style={rotate=20, anchor=north east, font=\footnotesize},
+ ymajorgrids=true,
+ legend pos=north east,
+ legend style={nodes={scale=0.7, transform shape}},
+ ymin=0, ymax=350
 ]
 \addplot[color=red, mark=square, thick] coordinates {
-    (Random, 262.47) (Gaussian, 157.36) (NearlySorted, 271.92) (Duplicates, 56.57) (Zipfian, 76.62)
+ (Random, 262.47) (Gaussian, 157.36) (NearlySorted, 271.92) (Duplicates, 56.57) (Zipfian, 76.62)
 }; \addlegendentry{PDQsort}
 \addplot[color=blue, mark=square, thick] coordinates {
-    (Random, 114.43) (Gaussian, 90.93) (NearlySorted, 91.63) (Duplicates, 35.91) (Zipfian, 82.25)
+ (Random, 114.43) (Gaussian, 90.93) (NearlySorted, 91.63) (Duplicates, 35.91) (Zipfian, 82.25)
 }; \addlegendentry{IPS4o}
 \addplot[color=teal, mark=*, thick] coordinates {
-    (Random, 109.90) (Gaussian, 88.30) (NearlySorted, 110.85) (Duplicates, 60.89) (Zipfian, 131.60)
+ (Random, 109.90) (Gaussian, 88.30) (NearlySorted, 110.85) (Duplicates, 60.89) (Zipfian, 131.60)
 }; \addlegendentry{ARS Aero}
 \end{axis}
 \end{tikzpicture}
@@ -129,8 +129,8 @@ While both algorithms achieve near-linear speedup up to 4 cores, ARS Aero mainta
 The scaling factor from 1 to 8 threads for ARS is $\approx 2.8\times$, indicating that while the algorithm is highly parallel, it eventually becomes bottlenecked by the 15.86 GB/s memory-bus throughput rather than logical comparisons.
 
 Another advantage of the spatial paradigm is most pronounced when sorting complex types.
-For "Random Strings," ARS Gen 6 achieves a \textbf{4.8x speedup} over PDQsort (1905.82 ms vs 9097.41 ms).
-As shown in \cref{fig:sub_strings}, while earlier parallel ARS generations (Gens 4--5) reached a physical memory wall at this scale due to auxiliary buffer requirements, the Aero architecture (Gen 6) maintains performance leadership through optimized memory management.
+For "Random Strings," ARS Aero achieves a \textbf{4.8x speedup} over PDQsort (1905.82 ms vs 9097.41 ms).
+As shown in \cref{fig:sub_strings}, while earlier parallel ARS generations (earlier Apex architectures) reached a physical memory wall at this scale due to auxiliary buffer requirements, the Aero architecture maintains performance leadership through optimized memory management.
 
 \begin{figure*}[t]
 \centering
@@ -138,21 +138,21 @@ As shown in \cref{fig:sub_strings}, while earlier parallel ARS generations (Gens
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=\linewidth, height=5cm,
-    xlabel={Thread Count},
-    ylabel={Execution Time (ms)},
-    xtick={1, 2, 4, 8},
-    legend pos=north east,
-    grid=both,
-    major grid style={line width=.2pt,draw=gray!50},
-    label style={font=\small},
-    tick label style={font=\small}
+ width=\linewidth, height=5cm,
+ xlabel={Thread Count},
+ ylabel={Execution Time (ms)},
+ xtick={1, 2, 4, 8},
+ legend pos=north east,
+ grid=both,
+ major grid style={line width=.2pt,draw=gray!50},
+ label style={font=\small},
+ tick label style={font=\small}
 ]
 \addplot[color=blue, mark=square, thick] coordinates {
-    (1, 373.7) (2, 200.5) (4, 124.6) (8, 114.4)
+ (1, 373.7) (2, 200.5) (4, 124.6) (8, 114.4)
 }; \addlegendentry{IPS4o}
 \addplot[color=teal, mark=*, thick] coordinates {
-    (1, 248.1) (2, 154.0) (4, 100.7) (8, 89.4)
+ (1, 248.1) (2, 154.0) (4, 100.7) (8, 89.4)
 }; \addlegendentry{ARS Aero}
 \end{axis}
 \end{tikzpicture}
@@ -164,19 +164,19 @@ As shown in \cref{fig:sub_strings}, while earlier parallel ARS generations (Gens
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    ybar,
-    width=\linewidth, height=5cm,
-    enlarge x limits=0.25,
-    ylabel={Execution Time (ms)},
-    symbolic x coords={PDQsort, Timsort, ARS Aero},
-    xtick=data,
-    xticklabel style={rotate=20, anchor=north east, font=\footnotesize},
-    nodes near coords,
-    every node near coord/.append style={font=\tiny, rotate=90, anchor=west},
-    bar width=15pt,
-    ymin=0, ymax=18000,
-    label style={font=\small},
-    tick label style={font=\small}
+ ybar,
+ width=\linewidth, height=5cm,
+ enlarge x limits=0.25,
+ ylabel={Execution Time (ms)},
+ symbolic x coords={PDQsort, Timsort, ARS Aero},
+ xtick=data,
+ xticklabel style={rotate=20, anchor=north east, font=\footnotesize},
+ nodes near coords,
+ every node near coord/.append style={font=\tiny, rotate=90, anchor=west},
+ bar width=15pt,
+ ymin=0, ymax=18000,
+ label style={font=\small},
+ tick label style={font=\small}
 ]
 \addplot[fill=purple!70] coordinates {(PDQsort,9097.41) (Timsort,10746.49) (ARS Aero,1905.82)};
 \end{axis}
@@ -206,7 +206,7 @@ However, the framework remained competitive while preserving stable throughput c
 To evaluate the robustness for ARS framework, we examine the \textit{Effective Constant Factor}, defined as the execution time per element ($T/N$).
 As shown in \cref{fig:sub_constant_factor}, standard $O(N \log N)$ sorters like PDQsort exhibit a logarithmic growth in per-element cost as $N$ increases. 
 
-In contrast, ARS Gen 6 shows a "Sampling Penalty" at small scales ($N=10^4$), where the fixed cost of quantile estimation and table construction is more pronounced.
+In contrast, ARS Aero shows a "Sampling Penalty" at small scales ($N=10^4$), where the fixed cost of quantile estimation and table construction is more pronounced.
 However, the factor stabilizes at $\approx 7.7$ ns per element for $N \geq 10^5$.
 This plateau indicates that the computational work per element becomes relatively independent of the total dataset size for large-scale workloads.
 
@@ -216,32 +216,32 @@ This plateau indicates that the computational work per element becomes relativel
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=\linewidth, height=5cm,
-    xmode=log,
-    xlabel={Dataset Size ($N$)},
-    ylabel={Cost per Element (ns)},
-    legend pos=north west,
-    grid=both,
-    major grid style={line width=.2pt,draw=gray!50},
-    legend style={nodes={scale=0.55, transform shape}, fill=white, fill opacity=0.8},
-    ymin=0, ymax=115,
-    label style={font=\small},
-    tick label style={font=\footnotesize}
+ width=\linewidth, height=5cm,
+ xmode=log,
+ xlabel={Dataset Size ($N$)},
+ ylabel={Cost per Element (ns)},
+ legend pos=north west,
+ grid=both,
+ major grid style={line width=.2pt,draw=gray!50},
+ legend style={nodes={scale=0.55, transform shape}, fill=white, fill opacity=0.8},
+ ymin=0, ymax=115,
+ label style={font=\small},
+ tick label style={font=\footnotesize}
 ]
 \addplot[color=red, mark=square, thick] coordinates {
-    (1000, 19.0) (10000, 21.8) (100000, 31.8) (1000000, 33.4) (10000000, 25.9)
+ (1000, 19.0) (10000, 21.8) (100000, 31.8) (1000000, 33.4) (10000000, 25.9)
 }; \addlegendentry{Quicksort}
 \addplot[color=violet, mark=pentagon*, thick] coordinates {
-    (1000, 22.5) (10000, 14.8) (100000, 7.0) (1000000, 8.2) (10000000, 11.4)
+ (1000, 22.5) (10000, 14.8) (100000, 7.0) (1000000, 8.2) (10000000, 11.4)
 }; \addlegendentry{IPS4o}
 \addplot[color=blue, mark=triangle, thick] coordinates {
-    (1000, 24.5) (10000, 78.6) (100000, 37.8) (1000000, 38.6) (10000000, 27.6)
-}; \addlegendentry{ARS Gen 3}
+ (1000, 24.5) (10000, 78.6) (100000, 37.8) (1000000, 38.6) (10000000, 27.6)
+}; \addlegendentry{ARS Apex Baseline}
 \addplot[color=orange, mark=diamond, thick] coordinates {
-    (1000, 57.8) (10000, 50.2) (100000, 34.4) (1000000, 15.3) (10000000, 12.9)
-}; \addlegendentry{ARS Gen 5}
+ (1000, 57.8) (10000, 50.2) (100000, 34.4) (1000000, 15.3) (10000000, 12.9)
+}; \addlegendentry{ARS Apex Optimized}
 \addplot[color=teal, mark=*, thick] coordinates {
-    (1000, 16.5) (10000, 105.8) (100000, 11.0) (1000000, 14.1) (10000000, 10.3)
+ (1000, 16.5) (10000, 105.8) (100000, 11.0) (1000000, 14.1) (10000000, 10.3)
 }; \addlegendentry{ARS Aero}
 \end{axis}
 \end{tikzpicture}
@@ -253,36 +253,36 @@ This plateau indicates that the computational work per element becomes relativel
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=\linewidth, height=5cm,
-    xmode=log,
-    xlabel={Dataset Size ($N$)},
-    ylabel={LLC Miss Rate (\%)},
-    axis y line*=left,
-    ymin=0, ymax=100,
-    grid=both,
-    major grid style={line width=.2pt,draw=gray!50},
-    label style={font=\small},
-    tick label style={font=\footnotesize},
-    legend pos=north west,
-    legend style={nodes={scale=0.6, transform shape}}
+ width=\linewidth, height=5cm,
+ xmode=log,
+ xlabel={Dataset Size ($N$)},
+ ylabel={LLC Miss Rate (\%)},
+ axis y line*=left,
+ ymin=0, ymax=100,
+ grid=both,
+ major grid style={line width=.2pt,draw=gray!50},
+ label style={font=\small},
+ tick label style={font=\footnotesize},
+ legend pos=north west,
+ legend style={nodes={scale=0.6, transform shape}}
 ]
 \addplot[color=blue, mark=triangle*, thick] coordinates {
-    (10000, 19.59) (100000, 17.11) (1000000, 28.73) (10000000, 40.49)
+ (10000, 19.59) (100000, 17.11) (1000000, 28.73) (10000000, 40.49)
 }; \addlegendentry{LLC Miss Rate}
 \end{axis}
 \begin{axis}[
-    width=\linewidth, height=5cm,
-    xmode=log,
-    axis y line*=right,
-    ylabel={Branch Misses ($10^6$)},
-    ymin=0, ymax=8,
-    axis x line=none,
-    label style={font=\small},
-    tick label style={font=\footnotesize},
-    legend style={at={(0.03,0.85)}, anchor=north west, nodes={scale=0.6, transform shape}}
+ width=\linewidth, height=5cm,
+ xmode=log,
+ axis y line*=right,
+ ylabel={Branch Misses ($10^6$)},
+ ymin=0, ymax=8,
+ axis x line=none,
+ label style={font=\small},
+ tick label style={font=\footnotesize},
+ legend style={at={(0.03,0.85)}, anchor=north west, nodes={scale=0.6, transform shape}}
 ]
 \addplot[color=red, mark=square*, thick, dashed] coordinates {
-    (10000, 0.017) (100000, 0.096) (1000000, 0.64) (10000000, 6.26)
+ (10000, 0.017) (100000, 0.096) (1000000, 0.64) (10000000, 6.26)
 }; \addlegendentry{Branch Misses}
 \end{axis}
 \end{tikzpicture}
@@ -327,14 +327,14 @@ This improves Store Buffer utilization, reduces Translation Lookaside Buffer (TL
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    ybar,
-    width=0.95\linewidth, height=5.5cm,
-    ylabel={Metric Value},
-    symbolic x coords={PDQsort, IPS4o, ARS Aero},
-    xtick=data,
-    legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1},
-    nodes near coords,
-    every node near coord/.append style={font=\tiny},
+ ybar,
+ width=0.95\linewidth, height=5.5cm,
+ ylabel={Metric Value},
+ symbolic x coords={PDQsort, IPS4o, ARS Aero},
+ xtick=data,
+ legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1},
+ nodes near coords,
+ every node near coord/.append style={font=\tiny},
 ]
 \addplot[fill=blue!50] coordinates {(PDQsort,2.24) (IPS4o,1.38) (ARS Aero,1.27)}; \addlegendentry{IPC}
 \addplot[fill=red!50] coordinates {(PDQsort,6.26) (IPS4o,7.12) (ARS Aero,7.65)}; \addlegendentry{Branch Misses ($10^7$)}
@@ -409,17 +409,17 @@ Pareto trade-off analysis observed at \cref{tab:streaming_audit} and \cref{fig:p
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    width=0.95\linewidth, height=6cm,
-    xlabel={Throughput (M ops/s)},
-    ylabel={P99 Latency ($\mu$s)},
-    grid=both,
-    major grid style={line width=.2pt,draw=gray!50},
-    legend pos=north east,
-    scatter,
-    only marks,
-    point meta=explicit symbolic,
-    nodes near coords,
-    every node near coord/.append style={font=\tiny, anchor=west, xshift=2pt}
+ width=0.95\linewidth, height=6cm,
+ xlabel={Throughput (M ops/s)},
+ ylabel={P99 Latency ($\mu$s)},
+ grid=both,
+ major grid style={line width=.2pt,draw=gray!50},
+ legend pos=north east,
+ scatter,
+ only marks,
+ point meta=explicit symbolic,
+ nodes near coords,
+ every node near coord/.append style={font=\tiny, anchor=west, xshift=2pt}
 ]
 \addplot[color=teal, mark=*, thick] table[meta=label] {
 x y label

@@ -10,7 +10,7 @@ By transforming sorting into a spatial classification problem, the framework red
 Traditional range-based sorters utilize a linear mapper $M(x) = \lfloor (x - \min) / \text{width} \rfloor$.
 Under non-uniform distributions (e.g., $X \sim \mathcal{N}(\mu, \sigma^2)$), this leads to bin-collisions at the distribution peaks, which increases the refinement cost toward comparison-based behavior due to excessive partition sizes. 
 
-The Aero architecture (Gen 6) addresses this variance by approximating the inverse-CDF function $\Phi^{-1}$ through a 1024-entry discrete lookup table $\mathcal{L}$ \cite{devroyeNonUniformRandomVariate1986}.
+The Aero architecture addresses this variance by approximating the inverse-CDF function $\Phi^{-1}$ through a 1024-entry discrete lookup table $\mathcal{L}$ \cite{devroyeNonUniformRandomVariate1986}.
 The bin index is calculated as:
 \begin{equation}
 \mathcal{B}(x) = \mathcal{L} \left[ \lfloor (\mathcal{K}(x) - \min) \cdot \mathcal{R} \cdot 2^{-64} \rfloor \right]

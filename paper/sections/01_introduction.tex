@@ -24,20 +24,20 @@ ARS Aero achieves substantial speedups on high-entropy and complex-type datasets
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-    ybar,
-    width=0.95\linewidth, height=5.5cm,
-    enlarge x limits=0.15,
-    ylabel={Speedup vs. PDQsort ($\times$)},
-    symbolic x coords={Random, Gaussian, Duplicates, Strings},
-    xtick=data,
-    nodes near coords,
-    nodes near coords align={vertical},
-    ymin=0, ymax=5.5,
-    major grid style={dashed, gray!30},
-    bar width=24pt,
-    fill=teal!70,
-    label style={font=\small},
-    tick label style={font=\small}
+ ybar,
+ width=0.95\linewidth, height=5.5cm,
+ enlarge x limits=0.15,
+ ylabel={Speedup vs. PDQsort ($\times$)},
+ symbolic x coords={Random, Gaussian, Duplicates, Strings},
+ xtick=data,
+ nodes near coords,
+ nodes near coords align={vertical},
+ ymin=0, ymax=5.5,
+ major grid style={dashed, gray!30},
+ bar width=24pt,
+ fill=teal!70,
+ label style={font=\small},
+ tick label style={font=\small}
 ]
 \addplot coordinates {(Random, 2.39) (Gaussian, 1.78) (Duplicates, 0.93) (Strings, 4.77)};
 \end{axis}
@@ -56,7 +56,7 @@ By emphasizing sequential memory access, cache-resident classification structure
 
 \subsection{Scientific Contributions}
 The scientific contributions of this paper span adaptive classification, streaming consolidation, and hardware-level performance evaluation.
-First, we introduce Aero (ARS Gen 6), a quantile-adaptive architecture that utilizes a cache-resident 1024-entry division-free lookup table to improve robustness under skewed and non-uniform distributions.
+First, we introduce Aero (ARS Aero), a quantile-adaptive architecture that utilizes a cache-resident 1024-entry division-free lookup table to improve robustness under skewed and non-uniform distributions.
 Unlike traditional range-based approaches, Aero maintains stable classification costs across varying entropy profiles while remaining competitive with state-of-the-art parallel sorters such as IPS4o \cite{axtmannInPlaceParallelSuper2017}.
 As illustrated in \cref{fig:teaser}, these gains are particularly pronounced for high-entropy and complex-type workloads, where branch-heavy comparison sorting becomes increasingly memory and prediction bound.
 

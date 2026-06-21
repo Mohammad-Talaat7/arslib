@@ -4,10 +4,10 @@ Unlike comparison-based sorters, ARS transforms sorting into a spatial classific
 
 At a high level, the framework operates through four primary stages:
 \begin{enumerate}
-  \item Spatial Key Projection
-  \item Fused Analysis and Histogram Generation
-  \item Contention-Free Scatter Partitioning
-  \item Localized Refinement
+ \item Spatial Key Projection
+ \item Fused Analysis and Histogram Generation
+ \item Contention-Free Scatter Partitioning
+ \item Localized Refinement
 \end{enumerate}
 
 \cref{fig:pipeline} summarizes the execution flow of the architecture.
@@ -15,41 +15,41 @@ At a high level, the framework operates through four primary stages:
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
-    node distance=0.7cm and 0.4cm,
-    process/.style={rectangle, draw, thick, fill=blue!10, text width=2.5cm, align=center, minimum height=0.8cm, font=\footnotesize},
-    branch/.style={rectangle, draw, dashed, thick, fill=teal!10, text width=1.9cm, align=center, minimum height=0.8cm, font=\footnotesize},
-    data/.style={ellipse, draw, thick, fill=gray!10, text width=1.6cm, align=center, font=\scriptsize},
-    arrow/.style={-Stealth, thick},
-    label_style/.style={font=\tiny\itshape, color=gray}
+ node distance=0.7cm and 0.4cm,
+ process/.style={rectangle, draw, thick, fill=blue!10, text width=2.5cm, align=center, minimum height=0.8cm, font=\footnotesize},
+ branch/.style={rectangle, draw, dashed, thick, fill=teal!10, text width=1.9cm, align=center, minimum height=0.8cm, font=\footnotesize},
+ data/.style={ellipse, draw, thick, fill=gray!10, text width=1.6cm, align=center, font=\scriptsize},
+ arrow/.style={-Stealth, thick},
+ label_style/.style={font=\tiny\itshape, color=gray}
 ]
 
-    % --- CORE PIPELINE ---
-    \node (input) [data] {Input Data $S$};
-    \node (project) [process, below=of input] {Spatial Projection $\mathcal{K}(x)$};
-    \node (analyze) [process, below=of project] {Fused Analyze Pass};
-    \node (hist) [process, below=of analyze] {Histogram Generation};
-    \node (prefix) [process, below=of hist] {Parallel Prefix Sum};
-    \node (scatter) [process, below=of prefix] {Scatter Partitioning};
-    \node (refine) [process, below=of scatter] {Local Refinement};
-    \node (output) [data, below=of refine] {Sorted Output $S'$};
+ % --- CORE PIPELINE ---
+ \node (input) [data] {Input Data $S$};
+ \node (project) [process, below=of input] {Spatial Projection $\mathcal{K}(x)$};
+ \node (analyze) [process, below=of project] {Fused Analyze Pass};
+ \node (hist) [process, below=of analyze] {Histogram Generation};
+ \node (prefix) [process, below=of hist] {Parallel Prefix Sum};
+ \node (scatter) [process, below=of prefix] {Scatter Partitioning};
+ \node (refine) [process, below=of scatter] {Local Refinement};
+ \node (output) [data, below=of refine] {Sorted Output $S'$};
 
-    % --- AERO BRANCH ---
-    \node (aero) [branch, right=of analyze] {Aero Branch: Quantile Table};
+ % --- AERO BRANCH ---
+ \node (aero) [branch, right=of analyze] {Aero Branch: Quantile Table};
 
-    % --- CONNECTIONS ---
-    \draw [arrow] (input) -- (project);
-    \draw [arrow] (project) -- (analyze);
-    \draw [arrow] (analyze) -- (hist);
-    \draw [arrow] (analyze) -- (aero) node[midway, above, label_style] {non-uniform};
-    \draw [arrow] (aero) |- (hist);
-    \draw [arrow] (hist) -- (prefix);
-    \draw [arrow] (prefix) -- (scatter);
-    \draw [arrow] (scatter) -- (refine);
-    \draw [arrow] (refine) -- (output);
+ % --- CONNECTIONS ---
+ \draw [arrow] (input) -- (project);
+ \draw [arrow] (project) -- (analyze);
+ \draw [arrow] (analyze) -- (hist);
+ \draw [arrow] (analyze) -- (aero) node[midway, above, label_style] {non-uniform};
+ \draw [arrow] (aero) |- (hist);
+ \draw [arrow] (hist) -- (prefix);
+ \draw [arrow] (prefix) -- (scatter);
+ \draw [arrow] (scatter) -- (refine);
+ \draw [arrow] (refine) -- (output);
 
-    % --- ENCAPSULATION ---
-    \node (streaming) [draw, orange!70, thick, dotted, inner sep=0.12cm, fit=(input) (project), label={[orange!70, font=\bfseries, xshift=1.1cm]right:Exp D Ingestion}] {};
-    \node (registry) [draw, purple!70, thick, dotted, inner sep=0.12cm, fit=(prefix) (scatter) (refine), label={[purple!70, font=\bfseries, xshift=1.1cm]right:Shadow Merging}] {};
+ % --- ENCAPSULATION ---
+ \node (streaming) [draw, orange!70, thick, dotted, inner sep=0.12cm, fit=(input) (project), label={[orange!70, font=\bfseries, xshift=1.1cm]right:Exp D Ingestion}] {};
+ \node (registry) [draw, purple!70, thick, dotted, inner sep=0.12cm, fit=(prefix) (scatter) (refine), label={[purple!70, font=\bfseries, xshift=1.1cm]right:Shadow Merging}] {};
 
 \end{tikzpicture}
 \caption{The ARS execution pipeline. The framework transforms sorting into a hardware-conscious spatial classification pipeline built around parallel partitioning and cache-efficient memory movement.}
@@ -97,7 +97,7 @@ For moderate dataset scales, these bins remain sufficiently small to fit within 
 While the core ARS pipeline performs efficiently under approximately uniform distributions, linear mapping functions may produce unstable occupancy under skewed workloads such as Gaussian or Zipfian datasets.
 This imbalance can create localized partition congestion and reduce parallel efficiency.
 
-In Aero (Gen 6) we address this limitation through quantile-adaptive classification.
+In Aero architecture we address this limitation through quantile-adaptive classification.
 Instead of relying solely on linear spatial partitioning, Aero utilizes a cache-resident 1024-entry division-free lookup table that approximates the inverse cumulative distribution function $\Phi^{-1}$.
 
 The mapping process begins by sampling a small subset of the dataset ($m = 256$) to estimate the observed distribution.
@@ -109,7 +109,7 @@ The resulting mapping function is defined as:
 \mathcal{L}
 \left[
 \left\lfloor
-  (\mathcal{K}(x) - \min) \cdot \mathcal{R} \cdot 2^{-64}
+ (\mathcal{K}(x) - \min) \cdot \mathcal{R} \cdot 2^{-64}
 \right\rfloor
 \right]
 \end{equation}
@@ -130,10 +130,10 @@ This allows the framework to maintain low-latency constant-time mapping while si
 \STATE $diff \gets k - min$
 \STATE $idx \gets (diff \cdot R) \gg 64$
 \IF{$isUniform$}
-    \STATE $b \gets \min(idx, numBins - 1)$
+ \STATE $b \gets \min(idx, numBins - 1)$
 \ELSE
-    \STATE $tIdx \gets \min(idx, 1023)$
-    \STATE $b \gets L[tIdx]$
+ \STATE $tIdx \gets \min(idx, 1023)$
+ \STATE $b \gets L[tIdx]$
 \ENDIF
 \RETURN $b$
 \end{algorithmic}
@@ -171,26 +171,26 @@ Additionally, the consolidation process preserves global ordering guarantees by 
 \begin{algorithmic}[1]
 \REQUIRE Work Queue $Q$, Bucketed Spatial Registry $B$
 \LOOP
-    \STATE $epoch \gets Q.pop()$
-    \STATE $SortedEpoch \gets \text{ARS}(epoch)$
-    \STATE $newRun \gets \text{SpatialRun}(SortedEpoch)$
-    \STATE $key \gets newRun.min \gg 44$
-    \STATE $bucket \gets B.\text{get\_or\_create}(key)$
-    \STATE $bucket.\text{lock}()$
-    \STATE $bucket.L_0.\text{push}(newRun)$
-    \IF{$bucket.L_0.\text{len}() \geq 8$}
-        \STATE $runs \gets bucket.L_0.\text{drain}()$
-        \STATE $merged \gets runs[0]$
-        \FORALL{$r \in runs[1..7]$}
-            \STATE $merged \gets \text{merge}(merged, r)$
-        \ENDFOR
-        \IF{$bucket.L_1 \text{ is present}$}
-            \STATE $bucket.L_1 \gets \text{merge}(bucket.L_1, merged)$
-        \ELSE
-            \STATE $bucket.L_1 \gets merged$
-        \ENDIF
-    \ENDIF
-    \STATE $bucket.\text{unlock}()$
+ \STATE $epoch \gets Q.pop()$
+ \STATE $SortedEpoch \gets \text{ARS}(epoch)$
+ \STATE $newRun \gets \text{SpatialRun}(SortedEpoch)$
+ \STATE $key \gets newRun.min \gg 44$
+ \STATE $bucket \gets B.\text{get\_or\_create}(key)$
+ \STATE $bucket.\text{lock}()$
+ \STATE $bucket.L_0.\text{push}(newRun)$
+ \IF{$bucket.L_0.\text{len}() \geq 8$}
+ \STATE $runs \gets bucket.L_0.\text{drain}()$
+ \STATE $merged \gets runs[0]$
+ \FORALL{$r \in runs[1..7]$}
+ \STATE $merged \gets \text{merge}(merged, r)$
+ \ENDFOR
+ \IF{$bucket.L_1 \text{ is present}$}
+ \STATE $bucket.L_1 \gets \text{merge}(bucket.L_1, merged)$
+ \ELSE
+ \STATE $bucket.L_1 \gets merged$
+ \ENDIF
+ \ENDIF
+ \STATE $bucket.\text{unlock}()$
 \ENDLOOP
 \end{algorithmic}
 \end{algorithm}
