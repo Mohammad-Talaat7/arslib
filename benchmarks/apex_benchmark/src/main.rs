@@ -578,9 +578,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 if !name.contains("Radix")
                                     && !name.contains("RDST")
                                     && !name.contains("Voracious")
-                                    && n <= 100_000 {
-                                        validate_sorted(&data_tracked, name);
-                                    }
+                                    && n <= 100_000
+                                {
+                                    validate_sorted(&data_tracked, name);
+                                }
                             }
                             "String" => {
                                 let mut data_raw = gen_strings(dist, n, &mut rng);
@@ -636,9 +637,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 if !name.contains("Radix")
                                     && !name.contains("AFSort")
                                     && !name.contains("UniversalRadix")
-                                    && n <= 100_000 {
-                                        validate_sorted(&data_tracked, name);
-                                    }
+                                    && n <= 100_000
+                                {
+                                    validate_sorted(&data_tracked, name);
+                                }
                             }
                             "Custom" => {
                                 let mut data_raw = gen_custom(dist, n, &mut rng);
@@ -686,10 +688,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     }
                                 }
 
-                                if !name.contains("Spreadsort")
-                                    && n <= 100_000 {
-                                        validate_sorted(&data_tracked, name);
-                                    }
+                                if !name.contains("Spreadsort") && n <= 100_000 {
+                                    validate_sorted(&data_tracked, name);
+                                }
                             }
                             _ => unreachable!(),
                         }
