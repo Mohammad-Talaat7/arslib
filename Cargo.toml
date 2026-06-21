@@ -25,6 +25,12 @@ edition = "2021"
 description = "Adjacency Run Sort (ARS): a fast run-based sorting algorithm in Rust."
 readme = "README.md"
 authors = ["Mohammad T. Ismael"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Mohammad-Talaat7/arslib"
+homepage = "https://github.com/Mohammad-Talaat7/arslib"
+documentation = "https://docs.rs/arslib"
+keywords = ["sorting", "algorithm", "performance", "parallel", "radix"]
+categories = ["algorithms", "science", "data-structures"]
 
 [dependencies]
 rayon = "1.10"
