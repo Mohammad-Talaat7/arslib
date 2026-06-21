@@ -12,10 +12,10 @@ members = [
     "implementations/ars_exp_b_hierarchical_staging",
     "implementations/ars_exp_c_adaptive_hierarchical",
     "implementations/ars_exp_d_stream_microbatch",
-    "apex_benchmark",
-    "master_benchmark",
-    "scalability_benchmark",
-    "streaming_benchmark",
+    "benchmarks/apex_benchmark",
+    "benchmarks/master_benchmark",
+    "benchmarks/scalability_benchmark",
+    "benchmarks/streaming_benchmark",
 ]
 
 [package]

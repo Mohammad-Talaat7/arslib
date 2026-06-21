@@ -1,11 +1,60 @@
 \section{The ARS Evolutionary Phylogeny}
-The development of Adaptive Range Sorting (ARS) was not a linear process, but an iterative attempt to resolve specific physical bottlenecks encountered when moving from tree-based structures to flat-array parallel engines.
+The development of Adaptive Range Sorting (ARS) was not a linear process, but an iterative attempt to resolve specific physical bottlenecks encountered when transitioning from tree-based structures to hardware-efficient parallel classification engines.
+Each generation emerged as a response to a specific scalability limitation observed in the previous design, gradually shifting the framework toward cache-conscious execution, reduced synchronization overhead, and stable high-throughput processing on modern multi-core hardware.
 
-Initially, ARS (Gens 1--2) relied on recursive $B$-tree nodes representing discrete spatial ranges. While this supported element-by-element streaming, the overhead of pointer-chasing and frequent heap allocations made it uncompetitive on modern parallel hardware. The first significant pivot was the "Apex" lineage (Gen 3), which abandoned trees for a fixed-bin ($B=1024$) flat-array model. By introducing a Histogram-based Parallel Prefix Sum \cite{blellochPrefixSumsTheir2018}, we were able to calculate global partitioning offsets $O_{t,b}$, enabling the contention-free scatter phase that remains a core primitive of the architecture.
+Initially, ARS (Gens 1--2) relied on recursive $B$-tree nodes representing discrete spatial ranges.
+While this design naturally supported element-by-element streaming, it was held back due to its combination of pointer chasing, recursive traversal, and frequent heap allocations.
+This made the architecture poorly suited for modern superscalar hardware.
+The primary scalability bottleneck at this stage was \textbf{cache locality}, which degraded rapidly as tree depth increased. Additionally, the synchronization overhead associated with dynamic node management limited parallel scalability.
 
-However, the transition to parallel flat arrays introduced new challenges, specifically load imbalances. In Gen 4, we addressed this by integrating dynamic work-stealing \cite{blumofeSchedulingMultithreadedComputations1999} and decoupling the bin count from the core count ($B \gg T$). This ensured cores remained saturated even when data distribution was non-uniform. The refinement of the Apex lineage culminated in Gen 5, which addressed the "Memory Wall" by fusing boundary detection, key extraction, and sortedness verification into a single traversal. This reduced total memory passes from three to two and yielded the significant string sorting speedups discussed in Section \ref{sec:evaluation}.
+The first major transition occurred with the introduction of the \textit{Apex} lineage (Gen 3), which replaced recursive trees with a fixed-bin flat-array model ($B = 1024$). 
+This transition eliminated recursive traversal and enabled the framework to operate through large contiguous memory regions. 
+By introducing a Histogram-based Parallel Prefix Sum~\cite{blellochPrefixSumsTheir2018}, ARS was able to compute global partition offsets $O_{t,b}$ and perform contention-free scatter operations without atomic synchronization. 
+This scatter pipeline became one of the foundational primitives of the framework.
 
-Aero (Gen 6) emerged from the realization that even a fused linear mapper fails on skewed data (the "Gaussian Penalty"). By incorporating a 1024-entry division-free quantile table that approximates the inverse-CDF $\Phi^{-1}$ \cite{devroyeNonUniformRandomVariate1986}, we effectively decoupled classification costs from data variance. \Cref{fig:evolution} illustrates this progression, showing how each architectural shift moved the algorithm closer to the hardware's theoretical throughput limits.
+However, the transition to flat-array parallelism introduced new scalability challenges. 
+Under skewed or clustered distributions, some partitions became significantly denser than others, causing thread imbalance and reduced core utilization. 
+Gen 4 addressed this limitation through dynamic work-stealing~\cite{blumofeSchedulingMultithreadedComputations1999} and by decoupling the bin count from the thread count ($B \gg T$). 
+This allowed heavily populated regions to be redistributed dynamically while preserving the sequential memory-access behavior required for efficient cache utilization.
+
+But as throughput increased, memory movement rather than classification cost became the dominant bottleneck. 
+Gen 5 addressed this issue by introducing a fused analysis pipeline that combined boundary detection, key extraction, and sortedness verification into a single traversal. 
+This reduced the number of memory passes from three to two while significantly improving cache reuse and memory-bandwidth efficiency. 
+The impact of this optimization became particularly visible for complex and variable-length data types such as strings, where redundant memory traversal costs are substantially higher than arithmetic costs.
+
+Despite these improvements, the Apex lineage remained sensitive to non-uniform distributions.
+Linear mapping functions produced unstable bin occupancy under Gaussian and Zipfian workloads, resulting in localized partition congestion and refinement imbalance similar to the load-balancing bottlenecks previously addressed in Gen 4.
+\textit{Aero} (Gen 6) emerged as a response to this distribution sensitivity.
+Aero resolved this distribution sensitivity by introducing a cache-resident 1024-entry division-free quantile lookup table that approximates the inverse cumulative distribution function $\Phi^{-1}$~\cite{devroyeNonUniformRandomVariate1986}. This decoupled the classification cost from data variance while maintaining low-latency, constant-time mapping.
+This significantly improved occupancy stability under skewed workloads and reduced classification imbalance across parallel partitions.
+
+At this point, the framework had matured into a hardware-conscious classification engine, although several exploratory architectures were still developed to investigate scalability limitations beyond the scope of the primary Aero lineage.
+
+\subsection{Exploratory Architectures}
+Exp A explored recursive parallel refinement as a response to the \textit{L2 cache overflow} problem that affects the early Apex lineage (Gens 3--4).
+While the first ARS partitioning pass maintains cache-efficient bin sizes for moderate datasets, extremely large workloads may produce refinement partitions too large to remain cache-resident.
+Exp A addressed this issue by recursively reapplying ARS to oversized bins using higher-resolution mapping functions.
+This ensured that the final comparison-based refinement stage operated only on cache-friendly data slices, preserving near-linear throughput scaling for very large datasets.
+
+Exp B investigated hierarchical staging to address store-buffer congestion during the scatter phase, a bottleneck that affects the Apex Gen 5 architecture.
+Directly scattering elements into hundreds of global bins introduced excessive random-write pressure, resulting in cache-line contention and translation lookaside buffer (TLB) thrashing.
+To mitigate this issue, Exp B introduced software write-combining buffers through small thread-local staging regions pinned in L1 cache.
+Elements were accumulated locally and flushed in contiguous bursts, significantly improving memory-bus utilization and reducing write-path latency.
+
+Exp C extended the framework toward workload-adaptive execution.
+The central observation behind this architecture was that optimization strategies beneficial for large or highly skewed datasets may introduce unnecessary overhead for small or nearly uniform workloads.
+Exp C therefore utilized the fused analysis pass to estimate data entropy and dynamically select the most suitable execution strategy at runtime.
+Depending on the observed distribution characteristics, the framework could trigger recursive refinement (Exp A), quantile-adaptive mapping (Aero Gen 6), or bypass-oriented fast paths (Gen 5).
+This transformed ARS from a static sorting pipeline into an adaptive hardware-conscious execution framework.
+
+An important observation here is that the architectural properties that improved parallel sorting---cache locality, contiguous scattering, and fixed-cost classification---also made ARS increasingly suitable for streaming and incremental data processing.
+
+This observation motivated the development of Exp D, the first architecture in the phylogeny that is simultaneously parallel and streamable.
+Rather than performing sorting as a monolithic terminal operation, Exp D shifts consolidation into a concurrent background pipeline through epoch-based micro-batching and spatial run consolidation. 
+This enables sustained high-throughput ingestion while maintaining bounded memory growth and reducing interference between ingestion and background merge operations.
+
+\cref{fig:evolution} illustrates the execution-time evolution of the ARS lineage relative to PDQsort across increasing dataset scales. 
+The progression demonstrates how successive architectural refinements gradually shifted the framework toward improved hardware utilization, reduced synchronization overhead, and more stable throughput scaling on modern multi-core systems.
 
 \begin{figure}[htbp]
 \centering
@@ -23,7 +72,10 @@ Aero (Gen 6) emerged from the realization that even a fused linear mapper fails 
 ]
 \addplot[color=red, mark=square, thick] coordinates {
     (1000,0.0190) (10000,0.2180) (100000,3.1853) (1000000,33.4045) (10000000,259.0647)
-}; \addlegendentry{Quicksort (std)}
+}; \addlegendentry{PDQsort (std)}
+\addplot[color=violet, mark=pentagon*, thick] coordinates {
+    (1000,0.0225) (10000,0.1482) (100000,0.6979) (1000000,8.2134) (10000000,114.4291)
+}; \addlegendentry{IPS4o}
 \addplot[color=blue, mark=triangle, thick] coordinates {
     (1000,0.0245) (10000,0.7865) (100000,3.7867) (1000000,38.6870) (10000000,276.6839)
 }; \addlegendentry{ARS Gen 3}
@@ -35,6 +87,6 @@ Aero (Gen 6) emerged from the realization that even a fused linear mapper fails 
 }; \addlegendentry{ARS Gen 6 (Aero)}
 \end{axis}
 \end{tikzpicture}
-\caption{Evolution of ARS execution time against Quicksort (i64 Random). Note the crossover at $N=10^5$, where ARS's instruction efficiency begins to dominate.}
+\caption{Evolution of ARS execution time against PDQsort (i64 Random).}
 \label{fig:evolution}
 \end{figure}

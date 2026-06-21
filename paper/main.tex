@@ -1,7 +1,7 @@
 \documentclass[journal,twoside]{IEEEtran}
 
 % --- PACKAGES ---
-\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
 \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{graphicx}
@@ -15,6 +15,8 @@
 \usepackage{cite}
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{subcaption}
+\newtheorem{theorem}{Theorem}
 
 \bibliographystyle{IEEEtran}
 
@@ -33,27 +35,25 @@ mohamed.talaat.ismael@gmail.com}}
 \maketitle
 
 \begin{abstract}
-This paper introduces Adaptive Range Sorting (ARS), a novel class of sorting algorithms that exploits hardware-level spatial mapping to bridge the gap between massive parallelism and high-throughput streamability. 
-We present the six-generation evolutionary phylogeny of ARS, along with four experimental branches, progressing from foundational tree-based structures to the modern "Apex" lineage and the "Aero" architecture. 
-Aero utilizes a 1024-entry division-free quantile table to achieve performance parity with state-of-the-art sorters like IPS4o on Gaussian integers, while providing improved throughput on skewed distributions and complex data types. Furthermore, we introduce ARS Exp D, which utilizes Concurrent Tiered Spatial Compaction to sort unbounded data streams with nanosecond-scale per-element ingestion latency. Empirical results at the 10-million-element scale indicate that ARS achieves consistent near-linear scaling (103.34 ms for 10M integers) and serves as a viable alternative for high-throughput multi-core data processing in memory-constrained environments.
+In this paper we introduce Adaptive Range Sorting (ARS), a hardware-conscious spatial classification framework for high-throughput parallel and streaming data processing.
+By projecting the data into a monotonic spatial domain, we enable branch-efficient classification and cache-conscious memory scattering.
+We also present the evolutionary development of ARS from recursive spatial trees to the Aero architecture, which utilizes a 1024-entry division-free quantile mapping table to improve robustness under skewed distributions while maintaining competitive performance against state-of-the-art sorters such as IPS4o.
+Furthermore, we introduce ARS Exp D, a low-latency streaming architecture based on epoch micro-batching and concurrent spatial consolidation, enabling sustained high-throughput ingestion with bounded memory growth.
+Experimental evaluation on modern multi-core hardware demonstrates near-linear throughput scaling, competitive streaming latency, and significant speedups on complex and high-entropy workloads, suggesting that spatial classification is a practical alternative to comparison-driven sorting for modern hardware-conscious data systems.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Sorting Algorithms, Adaptive Sorting, Spatial Mapping, Parallel Computing, Streaming Algorithms, Concurrent Systems.
+Sorting Algorithms, Cache-Conscious Algorithms, Distribution-Adaptive Sorting, Spatial Mapping, Parallel Sorting, Streaming Algorithms, Concurrent Systems.
 \end{IEEEkeywords}
 
 \input{sections/01_introduction}
 \input{sections/02_evolutionary_history}
 \input{sections/03_methodology}
-\input{sections/04_methodology_inplace}
-\input{sections/04_methodology_streaming}
-\input{sections/05_theoretical_analysis}
-\input{sections/06_experimental_setup}
-\input{sections/06_experimental_evaluation}
-\input{sections/07_robustness}
-\input{sections/11_hardware_atlas}
+\input{sections/04_theoretical_analysis}
+\input{sections/05_experimental_evaluation}
+\input{sections/06_limitations}
+\input{sections/07_future_directions}
 \input{sections/08_conclusion}
-\input{sections/09_limitations}
 
 \bibliography{references}
 \end{document}
