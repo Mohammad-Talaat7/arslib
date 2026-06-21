@@ -50,6 +50,8 @@ INPUT /opt/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm
 INPUT /opt/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmb7t.tfm
 INPUT /opt/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmri7t.tfm
 INPUT /opt/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmbi7t.tfm
+INPUT /opt/texlive/2026/texmf-dist/tex/latex/silence/silence.sty
+INPUT /opt/texlive/2026/texmf-dist/tex/latex/silence/silence.sty
 INPUT /opt/texlive/2026/texmf-dist/tex/latex/amsmath/amsmath.sty
 INPUT /opt/texlive/2026/texmf-dist/tex/latex/amsmath/amsmath.sty
 INPUT /opt/texlive/2026/texmf-dist/tex/latex/amsmath/amsopn.sty
@@ -402,10 +404,10 @@ INPUT ./main.out
 INPUT ./main.out
 INPUT main.out
 INPUT main.out
+OUTPUT main.pdf
 INPUT ./main.out
 INPUT ./main.out
 OUTPUT main.out
-OUTPUT main.pdf
 INPUT ./sections/01_introduction.tex
 INPUT ./sections/01_introduction.tex
 INPUT ./sections/01_introduction.tex
