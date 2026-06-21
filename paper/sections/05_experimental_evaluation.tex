@@ -298,7 +298,7 @@ Another observed point at \cref{fig:sub_constant_factor} is the massive spike in
 Beyond median execution time, the predictability of a sorting algorithm is critical for real-time systems. \Cref{tab:latency_stability} provides the Median execution time and Coefficient of Variation (CoV) at $N=10^7$.
 ARS Aero maintains a CoV $< 3\%$ for most distributions, indicating that its performance is primarily a function of memory bandwidth rather than algorithmic branch sensitivity.
 
-\begin{table}[h]
+\begin{table}[ht]
 \caption{Latency Stability ($N=10^7$, Median Time ms)}
 \label{tab:latency_stability}
 \centering
@@ -354,7 +354,7 @@ Our results show that ARS's performance remains stable as long as the dataset fi
 
 Another notable behavior is observed at a dataset size of $N = 10^4$, which lies in the "Thread-Pool Uncanny Valley." Here, the workload is large enough to activate Rayon's parallel task-splitting logic, but the actual sorting work (10,000 items) is so small that thread synchronization overhead dominates the execution time.
 
-\begin{table}[h]
+\begin{table}[ht]
 \caption{Throughput Scaling and Cache Pressure (Random i64)}
 \label{tab:throughput}
 \centering
@@ -383,7 +383,7 @@ The Exp D architecture was evaluated under continuous streaming ingestion worklo
 Incoming elements were accumulated through epoch-based micro-batching before being dispatched to concurrent background consolidation workers.
 This decoupled ingestion throughput from merge latency while preserving sequential memory-access behavior.
 
-\begin{table}[h]
+\begin{table}[ht]
 \caption{Exp D Streaming Performance Audit ($N=10^8$)}
 \label{tab:streaming_audit}
 \centering
