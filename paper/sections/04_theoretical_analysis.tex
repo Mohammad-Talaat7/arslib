@@ -59,4 +59,4 @@ For $B=1024$, the $\log \frac{n}{B}$ term remains sufficiently small in practice
 \subsection{Space Complexity}
 ARS Aero utilizes a spatial key cache of size $8n$ bytes and an auxiliary scratch buffer of size $n \cdot \text{size}(\mathcal{T})$, yielding an auxiliary space complexity of $O(n)$.
 This $2.5\times$ memory footprint compared to in-place sorters is the primary physical trade-off.
-We posit that this space-for-time exchange is justified in modern systems where DRAM capacity is abundant relative to per-core compute throughput.
+I posit that this space-for-time exchange is justified in modern systems where DRAM capacity is abundant relative to per-core compute throughput.

@@ -1,7 +1,7 @@
 \section{Experimental Evaluation}
 
 \subsection{Evaluation Goals}
-Our experimental evaluation investigates ARS across four primary dimensions, represented by the following Research Questions (RQs):
+My experimental evaluation investigates ARS across four primary dimensions, represented by the following Research Questions (RQs):
 \begin{itemize}
  \item \textbf{RQ1 (Throughput and Scaling)}: How does ARS scale throughput under various data sizes?
  \item \textbf{RQ2 (Distribution Resilience)}: Does the Aero architecture successfully maintain performance on non-uniform and adversarial data distributions?
@@ -9,7 +9,7 @@ Our experimental evaluation investigates ARS across four primary dimensions, rep
  \item \textbf{RQ4 (Streaming Ingestion)}: Can the Epoch-based architecture maintain bounded-latency ingestion under continuous workloads?
 \end{itemize}
 This evaluation does not aim to demonstrate universal superiority, but rather to analyze the performance envelope of the ARS framework.
-We seek to identify the architectural boundaries where hardware-aligned spatial mapping outpaces comparison-driven partitioning.
+I seek to identify the architectural boundaries where hardware-aligned spatial mapping outpaces comparison-driven partitioning.
 
 \subsection{Experimental Environment}
 The evaluation platform consisted of:
@@ -23,9 +23,9 @@ All benchmarks were compiled using identical optimization settings and executed 
 Hardware performance counters (PMCs) were benchmarked using the \texttt{perf\_event} API to capture cache-miss and branch-miss metrics.
 Evaluated algorithms were implemented in Rust 1.75 and compiled with the \texttt{--release} flag (optimization level 3) and \texttt{lto = true}.
 
-We also utilized a statistical methodology to isolate algorithmic performance:
+I also utilized a statistical methodology to isolate algorithmic performance:
 \begin{enumerate}
- \item \textbf{Statistical Variance}: For every algorithm-distribution pair $(A, D)$, we performed 10 independent repetitions. We report the median execution time to filter out non-deterministic system noise (e.g., context switches) while minimum execution time is included for reference. To assess stability, we also report the coefficient of variation for all primary benchmarks.
+ \item \textbf{Statistical Variance}: For every algorithm-distribution pair $(A, D)$, I performed 10 independent repetitions. I report the median execution time to filter out non-deterministic system noise (e.g., context switches) while minimum execution time is included for reference. To assess stability, I also report the coefficient of variation for all primary benchmarks.
  \item \textbf{Warmup and Cache State}: Each timed run was preceded by 3 warmup iterations to ensure the instruction cache and branch prediction tables were in a hot state.
  \item \textbf{Deterministic Generation}: Data was generated using the \texttt{ChaCha8} CSPRNG with a fixed seed (Seed=42), ensuring that all algorithms were evaluated on identical bit-level sequences.
  \item \textbf{Compiler Safety}: All results were wrapped in \texttt{std::hint::black\_box} to prevent Dead-Code Elimination (DCE).
@@ -39,7 +39,7 @@ ARS was evaluated against several representative sorting baselines:
 \item \textbf{Radix Sort}: as a fixed-width non-comparison throughput baseline.
 \end{itemize}
 
-To characterize the ARS framework, we utilized a diverse suite of benchmarks representing both theoretical models and real-world data structures:
+To characterize the ARS framework, I utilized a diverse suite of benchmarks representing both theoretical models and real-world data structures:
  \begin{enumerate}
  \item \textbf{Random (\textit{Uniform})}: Elements are drawn from a discrete uniform distribution $\mathbb{U}(0, 2^{64}-1)$. This provides a high-entropy baseline where keys are evenly distributed across the $B$ spatial bins, representing the ideal case for range partitioning.
  \item \textbf{Gaussian (\textit{Skewed})}: Elements follow a normal distribution $\mathcal{N}(\mu, \sigma^2)$, with $\mu = 2^{63}$ and $\sigma$ tuned to create a sharp peak in the key space. This workload evaluates the efficacy of the \textbf{Aero architecture's} quantile table in preventing "bin-congestion" at the distribution's center.
@@ -123,7 +123,7 @@ Under these conditions, the fixed-cost classification pipeline allowed ARS to su
 \label{fig:combined_performance}
 \end{figure*}
 
-To ensure parallel scalability, we additionally evaluated the scaling behavior of ARS Aero against IPS4o (represented by Rayon's parallel sort as a proxy) on an 8-core Zen 3 CPU.
+To ensure parallel scalability, I additionally evaluated the scaling behavior of ARS Aero against IPS4o (represented by Rayon's parallel sort as a proxy) on an 8-core Zen 3 CPU.
 As shown in \cref{fig:sub_scalability}, ARS Aero demonstrates consistently lower execution times across all evaluated thread counts.
 While both algorithms achieve near-linear speedup up to 4 cores, ARS Aero maintains a significant latency advantage due to its lower effective per-element processing cost.
 The scaling factor from 1 to 8 threads for ARS is $\approx 2.8\times$, indicating that while the algorithm is highly parallel, it eventually becomes bottlenecked by the 15.86 GB/s memory-bus throughput rather than logical comparisons.
@@ -190,10 +190,10 @@ As shown in \cref{fig:sub_strings}, while earlier parallel ARS generations (earl
 
 \subsection{Distribution Robustness}
 Traditional linear range partitioners usually suffer from occupancy collapse under skewed distributions, producing overloaded refinement bins and increased local sorting cost.
-The Aero architecture mitigates this issue through quantile-adaptive mapping using a cache-resident lookup table approximating the inverse cumulative distribution function as we can observe in \cref{fig:sub_dist}.
+The Aero architecture mitigates this issue through quantile-adaptive mapping using a cache-resident lookup table approximating the inverse cumulative distribution function as can be observed in \cref{fig:sub_dist}.
 
 Experimental results demonstrate that Aero maintains substantially more stable partition occupancy under Gaussian and Zipfian distributions compared to earlier Apex generations.
-This stabilization reduced refinement imbalance and improved overall thread utilization during the scatter and refinement phases as we can observe in \cref{fig:sub_entropy}.
+This stabilization reduced refinement imbalance and improved overall thread utilization during the scatter and refinement phases as can be observed in \cref{fig:sub_entropy}.
 
 Duplicate-heavy workloads represented one of the weakest scenarios for ARS.
 Because large regions of the key space collapse into identical spatial bins, refinement overhead may approach comparison-based behavior.
@@ -203,7 +203,7 @@ Although Aero improves occupancy balance, duplicate-aware comparison sorters can
 However, the framework remained competitive while preserving stable throughput characteristics across large-scale workloads.
 
 \subsection{Robustness Analysis}
-To evaluate the robustness for ARS framework, we examine the \textit{Effective Constant Factor}, defined as the execution time per element ($T/N$).
+To evaluate the robustness for ARS framework, I examine the \textit{Effective Constant Factor}, defined as the execution time per element ($T/N$).
 As shown in \cref{fig:sub_constant_factor}, standard $O(N \log N)$ sorters like PDQsort exhibit a logarithmic growth in per-element cost as $N$ increases. 
 
 In contrast, ARS Aero shows a "Sampling Penalty" at small scales ($N=10^4$), where the fixed cost of quantile estimation and table construction is more pronounced.
@@ -321,7 +321,7 @@ The scatter pipeline minimizes unpredictable branching by replacing comparison-d
 This substantially reduces the frequency of branch-dependent execution stalls relative to recursive comparison sorters.
 
 Furthermore, the use of software write-combining buffers converts highly fragmented random writes into contiguous cache-line bursts.
-This improves Store Buffer utilization, reduces Translation Lookaside Buffer (TLB) pressure, and increases effective memory-bandwidth saturation during the scatter phase we can clearly observe this at \cref{fig:hardware_efficiency}.
+This improves Store Buffer utilization, reduces Translation Lookaside Buffer (TLB) pressure, and increases effective memory-bandwidth saturation during the scatter phase as can be clearly observed in \cref{fig:hardware_efficiency}.
 
 \begin{figure}[htbp]
 \centering
@@ -350,7 +350,7 @@ This indicates that ARS executes fewer total branches, but a slightly higher abs
 
 Additionally, ARS Aero hits the "Memory Wall" earlier than comparison sorts. As seen in \cref{tab:throughput}, the framework reaches a peak throughput of $\approx 1477$ MB/s for 64-bit integers.
 On the Zen 3 architecture, performance is optimized for a single NUMA node where all 8 cores share a 16MB L3 cache. In multi-socket or multi-NUMA environments, crossing NUMA boundaries constitutes the primary performance bottleneck for spatial scatter-partitioning due to remote memory access latency, which necessitates strict NUMA-aware thread affinity.
-Our results show that ARS's performance remains stable as long as the dataset fits within the aggregate L3 cache of the CCD; once the dataset exceeds this ($N > 10^5$), the LLC miss rate increases from 13\% to 59\%, and the algorithm's throughput becomes strictly limited by DRAM bandwidth.
+My results show that ARS's performance remains stable as long as the dataset fits within the aggregate L3 cache of the CCD; once the dataset exceeds this ($N > 10^5$), the LLC miss rate increases from 13\% to 59\%, and the algorithm's throughput becomes strictly limited by DRAM bandwidth.
 
 Another notable behavior is observed at a dataset size of $N = 10^4$, which lies in the "Thread-Pool Uncanny Valley." Here, the workload is large enough to activate Rayon's parallel task-splitting logic, but the actual sorting work (10,000 items) is so small that thread synchronization overhead dominates the execution time.
 
@@ -371,7 +371,7 @@ $10^7$ & 1476.6 & 59.0\% & 1.27 \\
 \end{tabular}
 \end{table}
 
-Additionally to confirm our architectural thesis, we should observe the \cref{fig:sub_hardware_trends}, in which we can observe that LLC Miss Rate surge from 19.59\% to 40.49\% as $N$ scales from $10^4$ to $10^7$. This confirms that ARS becomes memory-bound once the dataset exceeds the 16MB L3 cache.
+Additionally to confirm my architectural thesis, one should observe \cref{fig:sub_hardware_trends}, which shows that LLC Miss Rate surge from 19.59\% to 40.49\% as $N$ scales from $10^4$ to $10^7$. This confirms that ARS becomes memory-bound once the dataset exceeds the 16MB L3 cache.
 
 \cref{fig:sub_hardware_trends} confirm that ARS trades cache locality for branch stability.
 It shows that while the CPU has to wait for memory (high LLC misses), it never has to restart the pipeline (low branch misses).

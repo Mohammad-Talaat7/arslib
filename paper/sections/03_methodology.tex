@@ -97,7 +97,7 @@ For moderate dataset scales, these bins remain sufficiently small to fit within 
 While the core ARS pipeline performs efficiently under approximately uniform distributions, linear mapping functions may produce unstable occupancy under skewed workloads such as Gaussian or Zipfian datasets.
 This imbalance can create localized partition congestion and reduce parallel efficiency.
 
-In Aero architecture we address this limitation through quantile-adaptive classification.
+In Aero architecture I address this limitation through quantile-adaptive classification.
 Instead of relying solely on linear spatial partitioning, Aero utilizes a cache-resident 1024-entry division-free lookup table that approximates the inverse cumulative distribution function $\Phi^{-1}$.
 
 The mapping process begins by sampling a small subset of the dataset ($m = 256$) to estimate the observed distribution.
@@ -153,7 +153,7 @@ The scatter phase preserves the original insertion order of elements assigned to
 Rather than performing sorting as a monolithic terminal operation, Exp D shifts consolidation into a concurrent background pipeline through epoch-based micro-batching and tiered spatial run compaction.
 
 Incoming elements are first accumulated in thread-local buffers referred to as \textit{Epochs}.
-Once a buffer reaches its threshold $N_e$ (defaulting to $131,072$ in the implementation, with $32,768$ verified as optimal for latency-sensitive workloads in our Pareto analysis), the epoch is atomically dispatched to a background work queue~\cite{zahariaDiscretizedStreamsFaulttolerant2013}.
+Once a buffer reaches its threshold $N_e$ (defaulting to $131,072$ in the implementation, with $32,768$ verified as optimal for latency-sensitive workloads in my Pareto analysis), the epoch is atomically dispatched to a background work queue~\cite{zahariaDiscretizedStreamsFaulttolerant2013}.
 This micro-batching strategy preserves sequential memory access patterns while ensuring that ingestion threads remain decoupled from background consolidation work.
 
 The background worker pool continuously monitors the work queue and performs concurrent spatial consolidation through a thread-safe \textit{Spatial Run Registry} organized as a bucketed hash map.

@@ -57,15 +57,15 @@ By emphasizing sequential memory access, cache-resident classification structure
 
 \subsection{Scientific Contributions}
 The scientific contributions of this paper span adaptive classification, streaming consolidation, and hardware-level performance evaluation.
-First, we introduce Aero (ARS Aero), a quantile-adaptive architecture that utilizes a cache-resident 1024-entry division-free lookup table to improve robustness under skewed and non-uniform distributions.
+First, I introduce Aero (ARS Aero), a quantile-adaptive architecture that utilizes a cache-resident 1024-entry division-free lookup table to improve robustness under skewed and non-uniform distributions.
 Unlike traditional range-based approaches, Aero maintains stable classification costs across varying entropy profiles while remaining competitive with state-of-the-art parallel sorters such as IPS4o \cite{axtmannInPlaceParallelSuper2017}.
 As illustrated in \cref{fig:teaser}, these gains are particularly pronounced for high-entropy and complex-type workloads, where branch-heavy comparison sorting becomes increasingly memory and prediction bound.
 
-In addition, we introduce ARS Exp D, a streaming architecture based on epoch micro-batching and concurrent spatial consolidation.
+In addition, I introduce ARS Exp D, a streaming architecture based on epoch micro-batching and concurrent spatial consolidation.
 Exp D enables sustained high-throughput ingestion with bounded memory growth while reducing the interference between ingestion and background consolidation workloads.
 
-Finally, we provide an extensive hardware-level evaluation of the ARS framework across multiple workload classes and data distributions.
-Our analysis examines throughput scaling, cache behavior, branch efficiency, latency stability, streaming interference, and memory-bandwidth limitations on modern multi-core hardware.
+Finally, I provide an extensive hardware-level evaluation of the ARS framework across multiple workload classes and data distributions.
+My analysis examines throughput scaling, cache behavior, branch efficiency, latency stability, streaming interference, and memory-bandwidth limitations on modern multi-core hardware.
 The results indicate that spatial classification provides a practical alternative to comparison-driven sorting for hardware-conscious data processing systems.
 However, ARS is not intended to universally replace comparison-based sorting algorithms.
 Instead, the framework targets high-throughput workloads where classification cost, memory locality, and branch efficiency dominate execution time.
