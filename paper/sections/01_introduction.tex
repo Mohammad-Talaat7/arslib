@@ -12,7 +12,7 @@ However, they typically depend on strict constraints on data representation, exh
 \subsection{Motivation: From Comparison Trees to Spatial Classification}
 The central observation motivating Adaptive Range Sorting (ARS) is that traditional sorting performance is strongly influenced by the cost of branch-heavy decision trees.
 A single branch misprediction on a modern CPU can stall the execution pipeline for 15--20 cycles.
-While this overhead is negligible for small datasets, comparison-driven partitioning can introduce substantial pipeline inefficiency at scales involving millions of elements \cite{kaligosiHowBranchMispredictions2006}.
+While this overhead is negligible for small datasets, comparison-driven partitioning can introduce substantial pipeline inefficiency at scales involving millions of elements \cite{kaligosiHowBranchMispredictions2006}. Recent efforts like BlockQuicksort \cite{edelkampBlockQuicksortHowBranch2016} mitigate this by decoupling control from data flow, yet they still fundamentally rely on $O(N \log N)$ comparison operations.
 
 ARS addresses this issue by transforming sorting into a spatial classification problem.
 Instead of comparing elements through recursive decision trees, the framework projects data into a monotonic spatial domain using a mapping function $\mathcal{K}$ (formally defined in \cref{sec:methodology}), which enables fixed-cost classification, cache-conscious memory scattering, and reduced dependence on unpredictable branching.

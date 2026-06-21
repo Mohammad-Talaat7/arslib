@@ -1,5 +1,5 @@
 \section{The ARS Evolutionary Phylogeny}
-The development of Adaptive Range Sorting (ARS) was not a linear process, but an iterative attempt to resolve specific physical bottlenecks encountered when transitioning from tree-based structures to hardware-efficient parallel classification engines.
+The development of Adaptive Range Sorting did not emerge fully formed. Its theoretical ancestry traces back to early distribution-based algorithms like Flashsort \cite{DrDobbsJournala}, but it has evolved through six distinct architectural generations to exploit contemporary multi-core hardware, with each iteration addressing specific systemic bottlenecks.
 Each generation emerged as a response to a specific scalability limitation observed in the previous design, gradually shifting the framework toward cache-conscious execution, reduced synchronization overhead, and stable high-throughput processing on modern multi-core hardware.
 
 Initially, ARS (early ARS architectures) relied on recursive $B$-tree nodes representing discrete spatial ranges.
@@ -9,7 +9,7 @@ The primary scalability bottleneck at this stage was \textbf{cache locality}, wh
 
 The first major transition occurred with the introduction of the \textit{Apex} lineage (Apex Baseline), which replaced recursive trees with a fixed-bin flat-array model ($B = 1024$). 
 This transition eliminated recursive traversal and enabled the framework to operate through large contiguous memory regions. 
-By introducing a Histogram-based Parallel Prefix Sum~\cite{blellochPrefixSumsTheir2018}, ARS was able to compute global partition offsets $O_{t,b}$ and perform contention-free scatter operations without atomic synchronization. 
+By introducing a Histogram-based Parallel Prefix Sum~\cite{blellochPrefixSumsTheir1990}, ARS was able to compute global partition offsets $O_{t,b}$ and perform contention-free scatter operations without atomic synchronization. 
 This scatter pipeline became one of the foundational primitives of the framework.
 
 However, the transition to flat-array parallelism introduced new scalability challenges. 

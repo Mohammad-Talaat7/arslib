@@ -7,17 +7,19 @@
 \citation{frigoCacheobliviousAlgorithms1999b,wulfHittingMemoryWall1995}
 \citation{cormenIntroductionAlgorithms2022}
 \citation{kaligosiHowBranchMispredictions2006}
+\citation{edelkampBlockQuicksortHowBranch2016}
 \citation{axtmannInPlaceParallelSuper2017}
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-A}}Motivation: From Comparison Trees to Spatial Classification}{1}{subsection.1.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-B}}Spatial Mapping and Hardware-Conscious Processing}{1}{subsection.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-C}}Scientific Contributions}{1}{subsection.1.3}\protected@file@percent }
-\citation{blellochPrefixSumsTheir2018}
+\citation{DrDobbsJournala}
+\citation{blellochPrefixSumsTheir1990}
 \citation{blumofeSchedulingMultithreadedComputations1999}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces The "Spatial Advantage": ARS Aero Speedup across diverse data domains ($N=10^7$) on i64 datatype and random strings. The framework demonstrates significant gains in high-entropy and complex-type sorting while maintaining competitive parity on low-entropy duplicates.}}{2}{figure.caption.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{fig:teaser}{{1}{2}{The "Spatial Advantage": ARS Aero Speedup across diverse data domains ($N=10^7$) on i64 datatype and random strings. The framework demonstrates significant gains in high-entropy and complex-type sorting while maintaining competitive parity on low-entropy duplicates}{figure.caption.1}{}}
 \newlabel{fig:teaser@cref}{{[figure][1][]1}{[1][1][]2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-C}}Scientific Contributions}{2}{subsection.1.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {II}The ARS Evolutionary Phylogeny}{2}{section.2}\protected@file@percent }
 \citation{devroyeNonUniformRandomVariate1986}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Exploratory Architectures}{3}{subsection.2.1}\protected@file@percent }
@@ -45,9 +47,9 @@
 \@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Concurrent Tiered Spatial Consolidation}}{5}{algorithm.2}\protected@file@percent }
 \newlabel{alg:expd_merge}{{2}{5}{Concurrent Tiered Spatial Consolidation}{algorithm.2}{}}
 \newlabel{alg:expd_merge@cref}{{[algorithm][2][]2}{[1][5][]5}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Theoretical Analysis}{5}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Mathematical Formalization}{5}{subsection.4.1}\protected@file@percent }
 \citation{devroyeNonUniformRandomVariate1986}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Theoretical Analysis}{6}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Mathematical Formalization}{6}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Inverse-CDF Approximation Invariants}{6}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Classification and I/O Complexity}{6}{subsection.4.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-C}1}I/O Model and Cache Complexity}{6}{subsubsection.4.3.1}\protected@file@percent }
@@ -75,7 +77,6 @@
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Latency Stability ($N=10^7$, Median Time ms)}}{8}{table.caption.7}\protected@file@percent }
 \newlabel{tab:latency_stability}{{I}{8}{Latency Stability ($N=10^7$, Median Time ms)}{table.caption.7}{}}
 \newlabel{tab:latency_stability@cref}{{[table][1][]I}{[1][8][]8}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Microarchitectural Analysis}{8}{subsection.5.7}\protected@file@percent }
 \newlabel{fig:sub_scalability}{{5a}{9}{Parallel Scalability ($N=10^7$)}{figure.caption.5}{}}
 \newlabel{fig:sub_scalability@cref}{{[subfigure][1][5]5a}{[1][8][]9}{}{}{}}
 \newlabel{sub@fig:sub_scalability}{{a}{9}{Parallel Scalability ($N=10^7$)}{figure.caption.5}{}}
@@ -98,6 +99,7 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Algorithmic Complexity and Hardware Utilization Scaling. As dataset size $N$ increases, ARS constant factor stabilizes due to cache-conscious layout optimization despite scaling LLC miss rates.}}{9}{figure.caption.6}\protected@file@percent }
 \newlabel{fig:combined_hardware_scaling}{{6}{9}{Algorithmic Complexity and Hardware Utilization Scaling. As dataset size $N$ increases, ARS constant factor stabilizes due to cache-conscious layout optimization despite scaling LLC miss rates}{figure.caption.6}{}}
 \newlabel{fig:combined_hardware_scaling@cref}{{[figure][6][]6}{[1][8][]9}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Microarchitectural Analysis}{9}{subsection.5.7}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Hardware Efficiency Comparison. ARS Aero achieves faster completion times despite a lower IPC due to a massive reduction in total instructions executed (bypassing comparison-tree branch overhead).}}{9}{figure.caption.8}\protected@file@percent }
 \newlabel{fig:hardware_efficiency}{{7}{9}{Hardware Efficiency Comparison. ARS Aero achieves faster completion times despite a lower IPC due to a massive reduction in total instructions executed (bypassing comparison-tree branch overhead)}{figure.caption.8}{}}
 \newlabel{fig:hardware_efficiency@cref}{{[figure][7][]7}{[1][9][]9}{}{}{}}
@@ -136,16 +138,18 @@
 \bibcite{wulfHittingMemoryWall1995}{3}
 \bibcite{cormenIntroductionAlgorithms2022}{4}
 \bibcite{kaligosiHowBranchMispredictions2006}{5}
-\bibcite{axtmannInPlaceParallelSuper2017}{6}
-\bibcite{blellochPrefixSumsTheir2018}{7}
-\bibcite{blumofeSchedulingMultithreadedComputations1999}{8}
-\bibcite{devroyeNonUniformRandomVariate1986}{9}
-\bibcite{graefeImplementingSortingDatabase2006}{10}
-\bibcite{nybergAlphasortCachesensitiveParallel1995}{11}
-\bibcite{zahariaDiscretizedStreamsFaulttolerant2013}{12}
-\bibcite{oneilLogstructuredMergetreeLSMtree1996}{13}
-\bibcite{kraska2018case}{14}
-\bibcite{khalifa2020learnedsort}{15}
+\bibcite{edelkampBlockQuicksortHowBranch2016}{6}
+\bibcite{axtmannInPlaceParallelSuper2017}{7}
+\bibcite{DrDobbsJournala}{8}
+\bibcite{blellochPrefixSumsTheir1990}{9}
+\bibcite{blumofeSchedulingMultithreadedComputations1999}{10}
+\bibcite{devroyeNonUniformRandomVariate1986}{11}
+\bibcite{graefeImplementingSortingDatabase2006}{12}
+\bibcite{nybergAlphasortCachesensitiveParallel1995}{13}
+\bibcite{zahariaDiscretizedStreamsFaulttolerant2013}{14}
+\bibcite{oneilLogstructuredMergetreeLSMtree1996}{15}
+\bibcite{kraska2018case}{16}
+\bibcite{khalifa2020learnedsort}{17}
 \@writefile{toc}{\contentsline {section}{\numberline {VIII}Conclusion}{13}{section.8}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{References}{13}{section*.12}\protected@file@percent }
 \gdef \@abspage@last{13}

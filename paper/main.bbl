@@ -35,11 +35,17 @@ T.~H. Cormen, C.~E. Leiserson, R.~L. Rivest, and C.~Stein, \emph{Introduction to
 \bibitem{kaligosiHowBranchMispredictions2006}
 K.~Kaligosi and P.~Sanders, ``How {{Branch Mispredictions Affect Quicksort}},'' in \emph{Algorithms -- {{ESA}} 2006}, D.~Hutchison, T.~Kanade, J.~Kittler, J.~M. Kleinberg, F.~Mattern, J.~C. Mitchell, M.~Naor, O.~Nierstrasz, C.~Pandu~Rangan, B.~Steffen, M.~Sudan, D.~Terzopoulos, D.~Tygar, M.~Y. Vardi, G.~Weikum, Y.~Azar, and T.~Erlebach, Eds.\hskip 1em plus 0.5em minus 0.4em\relax Berlin, Heidelberg: Springer Berlin Heidelberg, 2006, vol. 4168, pp. 780--791.
 
+\bibitem{edelkampBlockQuicksortHowBranch2016}
+S.~Edelkamp and A.~Wei{\ss}, ``{{BlockQuicksort}}: {{How Branch Mispredictions}} don't affect {{Quicksort}},'' Jun. 2016.
+
 \bibitem{axtmannInPlaceParallelSuper2017}
 M.~Axtmann, S.~Witt, D.~Ferizovic, and P.~Sanders, ``In-{{Place Parallel Super Scalar Samplesort}} ({{IPSSSSo}}),'' \emph{LIPIcs, Volume 87, ESA 2017}, vol.~87, pp. 9:1--9:14, 2017.
 
-\bibitem{blellochPrefixSumsTheir2018}
-G.~E. Blelloch, ``Prefix sums and their applications,'' p. 1294199 Bytes, Jun. 2018.
+\bibitem{DrDobbsJournala}
+``Dr. {{Dobb}}'s {{Journal February}} 1998: {{The Flashsort1 Algorithm}},'' https://www.neubert.net/Flapaper/9802n.htm.
+
+\bibitem{blellochPrefixSumsTheir1990}
+G.~E. Blelloch, ``Prefix sums and their applications,'' in \emph{Synthesis of Parallel Algorithms}.\hskip 1em plus 0.5em minus 0.4em\relax Morgan Kaufmann, 1990, pp. 35--60.
 
 \bibitem{blumofeSchedulingMultithreadedComputations1999}
 R.~D. Blumofe and C.~E. Leiserson, ``Scheduling multithreaded computations by work stealing,'' \emph{Journal of the ACM}, vol.~46, no.~5, pp. 720--748, Sep. 1999.
