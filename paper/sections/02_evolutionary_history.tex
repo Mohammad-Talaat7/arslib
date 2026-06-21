@@ -1,0 +1,40 @@
+\section{The ARS Evolutionary Phylogeny}
+The development of Adaptive Range Sorting (ARS) was not a linear process, but an iterative attempt to resolve specific physical bottlenecks encountered when moving from tree-based structures to flat-array parallel engines.
+
+Initially, ARS (Gens 1--2) relied on recursive $B$-tree nodes representing discrete spatial ranges. While this supported element-by-element streaming, the overhead of pointer-chasing and frequent heap allocations made it uncompetitive on modern parallel hardware. The first significant pivot was the "Apex" lineage (Gen 3), which abandoned trees for a fixed-bin ($B=1024$) flat-array model. By introducing a Histogram-based Parallel Prefix Sum \cite{blellochPrefixSumsTheir2018}, we were able to calculate global partitioning offsets $O_{t,b}$, enabling the contention-free scatter phase that remains a core primitive of the architecture.
+
+However, the transition to parallel flat arrays introduced new challenges, specifically load imbalances. In Gen 4, we addressed this by integrating dynamic work-stealing \cite{blumofeSchedulingMultithreadedComputations1999} and decoupling the bin count from the core count ($B \gg T$). This ensured cores remained saturated even when data distribution was non-uniform. The refinement of the Apex lineage culminated in Gen 5, which addressed the "Memory Wall" by fusing boundary detection, key extraction, and sortedness verification into a single traversal. This reduced total memory passes from three to two and yielded the significant string sorting speedups discussed in Section \ref{sec:evaluation}.
+
+Aero (Gen 6) emerged from the realization that even a fused linear mapper fails on skewed data (the "Gaussian Penalty"). By incorporating a 1024-entry division-free quantile table that approximates the inverse-CDF $\Phi^{-1}$ \cite{devroyeNonUniformRandomVariate1986}, we effectively decoupled classification costs from data variance. \Cref{fig:evolution} illustrates this progression, showing how each architectural shift moved the algorithm closer to the hardware's theoretical throughput limits.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.95\linewidth, height=6cm,
+    xmode=log, ymode=log,
+    xlabel={Dataset Size ($N$)},
+    ylabel={Execution Time (ms)},
+    legend pos=north west,
+    grid=both,
+    major grid style={line width=.2pt,draw=gray!50},
+    minor grid style={line width=.1pt,draw=gray!20},
+    legend style={nodes={scale=0.6, transform shape}, fill=white, fill opacity=0.8, draw opacity=1}
+]
+\addplot[color=red, mark=square, thick] coordinates {
+    (1000,0.0190) (10000,0.2180) (100000,3.1853) (1000000,33.4045) (10000000,259.0647)
+}; \addlegendentry{Quicksort (std)}
+\addplot[color=blue, mark=triangle, thick] coordinates {
+    (1000,0.0245) (10000,0.7865) (100000,3.7867) (1000000,38.6870) (10000000,276.6839)
+}; \addlegendentry{ARS Gen 3}
+\addplot[color=orange, mark=diamond, thick] coordinates {
+    (1000,0.0578) (10000,0.5028) (100000,3.4457) (1000000,15.3963) (10000000,129.4175)
+}; \addlegendentry{ARS Gen 5}
+\addplot[color=teal, mark=*, thick] coordinates {
+    (1000,0.0165) (10000,1.0580) (100000,1.1045) (1000000,14.1855) (10000000,103.3404)
+}; \addlegendentry{ARS Gen 6 (Aero)}
+\end{axis}
+\end{tikzpicture}
+\caption{Evolution of ARS execution time against Quicksort (i64 Random). Note the crossover at $N=10^5$, where ARS's instruction efficiency begins to dominate.}
+\label{fig:evolution}
+\end{figure}

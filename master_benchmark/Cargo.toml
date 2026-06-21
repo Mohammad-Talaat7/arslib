@@ -1,0 +1,40 @@
+[package]
+name = "ars_master_benchmark"
+version = "3.1.0"
+edition = "2021"
+
+[dependencies]
+rayon = "1.10"
+rand = "0.8"
+rand_chacha = "0.3"
+rand_distr = "0.4"
+sys-info = "0.9"
+# Core Lineage
+ars_native = { path = "../implementations/ars_gen_3_apex_baseline" }
+ars_recursive = { path = "../implementations/ars_gen_1_foundation" }
+ars_spatial_grid = { path = "../implementations/ars_gen_2_grid_mapping" }
+ars_parallel_apex = { path = "../implementations/ars_gen_4_parallel_apex" }
+ars_optimized_apex = { path = "../implementations/ars_gen_5_optimized_apex" }
+ars_gen_6_aero = { path = "../implementations/ars_gen_6_aero" }
+ars_stream_microbatch = { path = "../implementations/ars_exp_d_stream_microbatch" }
+
+# Experimental
+ars_recursive_parallel = { path = "../implementations/ars_exp_a_recursive_parallel" }
+ars_hierarchical_staging = { path = "../implementations/ars_exp_b_hierarchical_staging" }
+ars_adaptive_hierarchical = { path = "../implementations/ars_exp_c_adaptive_hierarchical" }
+
+pyo3 = { version = "0.23", features = ["extension-module"] }
+hashbrown = "0.14"
+ahash = "0.8"
+rust_xlsxwriter = "0.94"
+perf-event = "0.4"
+indicatif = "0.17"
+libc = "0.2"
+
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "research_engine"
+path = "src/main.rs"

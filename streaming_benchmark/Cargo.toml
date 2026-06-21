@@ -1,0 +1,25 @@
+[package]
+name = "ars_streaming_benchmark"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+perf-event = "0.4"
+sys-info = "0.9"
+indicatif = "0.17"
+crossbeam-channel = "0.5"
+hdrhistogram = "7.5"
+rand = "0.8"
+rand_chacha = "0.3"
+rand_distr = "0.4"
+chrono = "0.4"
+
+# Workspace Members
+ars_native = { path = "../implementations/ars_gen_3_apex_baseline" }
+ars_master_benchmark = { path = "../master_benchmark" }
+ars_stream_microbatch = { path = "../implementations/ars_exp_d_stream_microbatch" }
+ars_optimized_apex = { path = "../implementations/ars_gen_5_optimized_apex" }
+
+[[bin]]
+name = "streaming_engine"
+path = "src/main.rs"

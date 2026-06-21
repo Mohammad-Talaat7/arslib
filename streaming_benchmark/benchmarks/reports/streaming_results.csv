@@ -1,0 +1,17 @@
+Algorithm,Pattern,P50 (us),P95 (us),P99 (us),Max (us),Jitter (us),Throughput (ops/s),Consolidation (ms)
+ARS Stream,Uniform,0,341,961,2857,199.02,22085452,301.8754
+Chunked Merge,Uniform,74,107,151,234,24.22,13718712,590.8047
+Replacement Selection,Uniform,794,1141,1385,1957,226.24,8607505,335.0913
+LSM Proxy,Uniform,0,1860,2031,3719,546.62,18043668,334.9381
+ARS Stream,Zipfian,0,14927,32991,43839,6232.14,4401548,189.7834
+Chunked Merge,Zipfian,0,1,2,22,0.82,10273886,612.4833
+Replacement Selection,Zipfian,153,275,563,899,87.89,15983111,129.5426
+LSM Proxy,Zipfian,0,1,2,31,0.91,21286721,125.6946
+ARS Stream,Bursty,0,91,237,3477,78.07,21682497,294.9799
+Chunked Merge,Bursty,0,90,121,287,28.26,7441401,1202.4147
+Replacement Selection,Bursty,42,918,1082,3493,265.54,8260002,316.2401
+LSM Proxy,Bursty,0,0,1702,2645,211.57,18046594,323.4734
+ARS Stream,TemporalLocality,0,11551,36863,46239,6324.49,4611223,267.7268
+Chunked Merge,TemporalLocality,0,94,135,175,28.55,15508772,460.8432
+Replacement Selection,TemporalLocality,492,774,1042,15231,488.14,13433458,64.2977
+LSM Proxy,TemporalLocality,0,447,830,1453,174.94,19335496,311.4243

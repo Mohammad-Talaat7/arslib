@@ -1,0 +1,62 @@
+\section{Methodology: The ARS Architecture} \label{sec:methodology}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    node distance=0.7cm and 0.4cm,
+    process/.style={rectangle, draw, thick, fill=blue!10, text width=2.5cm, align=center, minimum height=0.8cm, font=\footnotesize},
+    branch/.style={rectangle, draw, dashed, thick, fill=teal!10, text width=1.9cm, align=center, minimum height=0.8cm, font=\footnotesize},
+    data/.style={ellipse, draw, thick, fill=gray!10, text width=1.6cm, align=center, font=\scriptsize},
+    arrow/.style={-Stealth, thick},
+    label_style/.style={font=\tiny\itshape, color=gray}
+]
+
+    % --- CORE PIPELINE ---
+    \node (input) [data] {Input Data $S$};
+    \node (project) [process, below=of input] {Spatial Projection $\mathcal{K}(x)$};
+    \node (analyze) [process, below=of project] {Fused Analyze Pass};
+    \node (hist) [process, below=of analyze] {Histogram Generation};
+    \node (prefix) [process, below=of hist] {Parallel Prefix Sum};
+    \node (scatter) [process, below=of prefix] {Scatter Partitioning};
+    \node (refine) [process, below=of scatter] {Local Refinement};
+    \node (output) [data, below=of refine] {Sorted Output $S'$};
+
+    % --- AERO BRANCH ---
+    \node (aero) [branch, right=of analyze] {Aero Branch: Quantile Table};
+
+    % --- CONNECTIONS ---
+    \draw [arrow] (input) -- (project);
+    \draw [arrow] (project) -- (analyze);
+    \draw [arrow] (analyze) -- (hist);
+    \draw [arrow] (analyze) -- (aero) node[midway, above, label_style] {non-uniform};
+    \draw [arrow] (aero) |- (hist);
+    \draw [arrow] (hist) -- (prefix);
+    \draw [arrow] (prefix) -- (scatter);
+    \draw [arrow] (scatter) -- (refine);
+    \draw [arrow] (refine) -- (output);
+
+    % --- ENCAPSULATION ---
+    \node (streaming) [draw, orange!70, thick, dotted, inner sep=0.12cm, fit=(input) (project), label={[orange!70, font=\tiny\bfseries, xshift=1.1cm]right:Exp D Ingestion}] {};
+    \node (registry) [draw, purple!70, thick, dotted, inner sep=0.12cm, fit=(prefix) (scatter) (refine), label={[purple!70, font=\tiny\bfseries, xshift=1.1cm]right:Shadow Merging}] {};
+
+\end{tikzpicture}
+\caption{The ARS Execution Pipeline (Single Column). The architecture transforms sorting into a hardware-aligned signal-processing flow.}
+\label{fig:pipeline}
+\end{figure}
+
+The ARS engine is designed as a phased pipeline that prioritizes memory-bus saturation and instruction-level parallelism. 
+As illustrated in \cref{fig:pipeline}, the framework transforms sorting from a comparison-heavy decision tree into a hardware-aligned signal-processing flow. 
+ARS treats sorting as a projection task, mapping arbitrary types into a discrete $\mathbb{U}_{64}$ space via a monotonic function $\mathcal{K}$.
+
+
+For primitive integers, $\mathcal{K}$ is a bit-bias transformation; for floats, it manipulates IEEE 754 exponent bits to preserve sign-bit ordering; and for strings, it extracts a big-endian 8-byte prefix \cite{graefeImplementingSortingDatabase2006}. While prefix collisions force a fallback to standard refinement (sorting by full value in each bin), this hybrid approach reclamation allows for $O(N)$ expected performance on diverse datasets.
+
+The pipeline begins with a \textbf{Fused Analyze Pass}. To mitigate the "Memory Wall," this pass combines boundary detection ($\min/\max$), sortedness verification, and spatial key extraction into a single parallel traversal. By caching these keys in a hardware-aligned buffer, we turn complex-type sorting into a high-speed integer permutation problem. 
+
+The partitioning itself is driven by a \textbf{Histogram-based Parallel Prefix Sum} (Equation \ref{eq:prefix_sum}). Each thread computes a local histogram $C_{t,b}$ for its chunk, which is aggregated into a global offset table $O_{t,b}$. This ensures that threads can scatter elements into the destination buffer without atomic synchronization. 
+
+\begin{equation} \label{eq:prefix_sum}
+O_{t,b} = \sum_{i=0}^{b-1} \sum_{j=0}^{T-1} C_{j,i} + \sum_{j=0}^{t-1} C_{j,b}
+\end{equation}
+
+To address the "Random Write Penalty" during scattering, ARS utilizes small, stack-allocated blocks ($L=8$). Elements are collected locally and flushed in contiguous bursts, leveraging the CPU's write-combining buffers to maximize bandwidth utilization \cite{nybergAlphasortCachesensitiveParallel1995}.

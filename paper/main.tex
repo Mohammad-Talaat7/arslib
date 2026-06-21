@@ -1,0 +1,59 @@
+\documentclass[journal,twoside]{IEEEtran}
+
+% --- PACKAGES ---
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\bibliographystyle{IEEEtran}
+
+
+% --- TITLE & AUTHORS ---
+\title{From Comparison Trees to Spatial Classification}
+
+\author{\IEEEauthorblockN{Mohammad~T.~Ismael} \\
+\IEEEauthorblockA{Cairo, Egypt \\
+mohamed.talaat.ismael@gmail.com}}
+
+% Remove the journal headers for a cleaner standalone look
+\markboth{Research Draft,~May~2026}{Ismael: Adaptive Range Sorting}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper introduces Adaptive Range Sorting (ARS), a novel class of sorting algorithms that exploits hardware-level spatial mapping to bridge the gap between massive parallelism and high-throughput streamability. 
+We present the six-generation evolutionary phylogeny of ARS, along with four experimental branches, progressing from foundational tree-based structures to the modern "Apex" lineage and the "Aero" architecture. 
+Aero utilizes a 1024-entry division-free quantile table to achieve performance parity with state-of-the-art sorters like IPS4o on Gaussian integers, while providing improved throughput on skewed distributions and complex data types. Furthermore, we introduce ARS Exp D, which utilizes Concurrent Tiered Spatial Compaction to sort unbounded data streams with nanosecond-scale per-element ingestion latency. Empirical results at the 10-million-element scale indicate that ARS achieves consistent near-linear scaling (103.34 ms for 10M integers) and serves as a viable alternative for high-throughput multi-core data processing in memory-constrained environments.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Sorting Algorithms, Adaptive Sorting, Spatial Mapping, Parallel Computing, Streaming Algorithms, Concurrent Systems.
+\end{IEEEkeywords}
+
+\input{sections/01_introduction}
+\input{sections/02_evolutionary_history}
+\input{sections/03_methodology}
+\input{sections/04_methodology_inplace}
+\input{sections/04_methodology_streaming}
+\input{sections/05_theoretical_analysis}
+\input{sections/06_experimental_setup}
+\input{sections/06_experimental_evaluation}
+\input{sections/07_robustness}
+\input{sections/11_hardware_atlas}
+\input{sections/08_conclusion}
+\input{sections/09_limitations}
+
+\bibliography{references}
+\end{document}

@@ -1,0 +1,37 @@
+\section{Experimental Setup and Reproducibility} \label{sec:experimental_setup}
+To ensure the scientific validity and reproducibility of the results presented in this paper, we detail the hardware, software, and statistical methodology used in our empirical study.
+
+\subsection{Evaluation Goals and Research Questions}
+Our empirical evaluation is designed to characterize the ARS framework along four primary dimensions, represented by the following Research Questions (RQs):
+
+\begin{itemize}
+    \item \textbf{RQ1 (Throughput and Scaling)}: How does ARS compare to standard $O(N \log N)$ library implementations across four orders of magnitude of dataset size $N$?
+    \item \textbf{RQ2 (Distribution Resilience)}: Does the Aero architecture successfully mitigate performance degradation on non-uniform stochastic distributions compared to its predecessors?
+    \item \textbf{RQ3 (Streaming Ingestion)}: Can the Epoch-based architecture maintain microsecond-scale P99 ingestion latency under high-velocity burst conditions?
+    \item \textbf{RQ4 (Hardware Interaction)}: What is the measurable trade-off between reduced logical branching and increased memory-hierarchy pressure (L3/LLC misses) in the spatial mapping paradigm?
+\end{itemize}
+
+\subsection{Hardware and Compiler Specifications}
+All benchmarks were executed on an 8-core x86\_64 CPU (Zen 3 architecture) with 15.86 GB of DDR4 RAM. The CPU features a 32 KB L1 Data Cache, 512 KB L2 Cache, and a 16 MB shared L3 Cache. The system operates under a single-node NUMA configuration, ensuring consistent memory latency across all cores. 
+
+Hardware performance counters (PMCs) were instrumented using the \texttt{perf\_event} API to capture cache-miss and branch-miss metrics. The sorting algorithms were implemented in Rust 1.75 and compiled with the \texttt{--release} flag (optimization level 3) and \texttt{lto = true}. Target-specific optimizations (\texttt{-C target-cpu=native}) were enabled to allow the compiler to utilize SIMD instructions (AVX2/BMIs) where applicable.
+
+\subsection{Benchmark Methodology}
+We utilized a rigorous statistical methodology to isolate algorithmic performance:
+\begin{enumerate}
+    \item \textbf{Statistical Variance}: For every algorithm-distribution pair $(A, D)$, we performed 10 independent repetitions. We report the minimum execution time to filter out non-deterministic system noise (e.g., context switches). To assess stability, we verified that the coefficient of variation remained below 3\% for all primary benchmarks.
+    \item \textbf{Warmup and Cache State}: Each timed run was preceded by 3 warmup iterations to ensure the instruction cache and branch prediction tables were in a hot state.
+    \item \textbf{Deterministic Generation}: Data was generated using the \texttt{ChaCha8} CSPRNG with a fixed seed (Seed=42), ensuring that all algorithms were evaluated on identical bit-level sequences.
+    \item \textbf{Compiler Safety}: All results were wrapped in \texttt{std::hint::black\_box} to prevent Dead-Code Elimination (DCE).
+\end{enumerate}
+
+\subsection{Comparison Fairness}
+To ensure a fair comparison between the ARS framework and established baselines:
+\begin{itemize}
+    \item \textbf{Standard Library}: We compare against Rust's \texttt{std::slice::sort\_unstable} (PDQsort) and \texttt{std::slice::sort} (Timsort).
+    \item \textbf{Thread Parity}: All parallel algorithms (IPS4o and ARS) were restricted to the same 8-core thread pool using the \texttt{RAYON\_NUM\_THREADS} environment variable.
+    \item \textbf{Instrumentation Overhead}: Metrics such as comparison and move counts were gathered using a zero-cost tracking wrapper (\texttt{Tracked<T>}) that adds minimal overhead to the critical path.
+\end{itemize}
+
+\subsection{Availability of Source Code}
+To facilitate independent verification, the complete source code, benchmarking engine, and raw datasets are available at \url{https://github.com/mohammad-ismael/arslib}.

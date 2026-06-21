@@ -1,0 +1,59 @@
+\documentclass[journal,twoside]{IEEEtran}
+
+% --- PACKAGES ---
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{subcaption}
+\newtheorem{theorem}{Theorem}
+
+\bibliographystyle{IEEEtran}
+
+
+% --- TITLE & AUTHORS ---
+\title{From Comparison Trees to Spatial Classification}
+
+\author{\IEEEauthorblockN{Mohammad~T.~Ismael} \\
+\IEEEauthorblockA{Cairo, Egypt \\
+mohamed.talaat.ismael@gmail.com}}
+
+% Remove the journal headers for a cleaner standalone look
+\markboth{Research Draft,~May~2026}{Ismael: Adaptive Range Sorting}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In this paper we introduce Adaptive Range Sorting (ARS), a hardware-conscious spatial classification framework for high-throughput parallel and streaming data processing.
+By projecting the data into a monotonic spatial domain, we enable branch-efficient classification and cache-conscious memory scattering.
+We also present the evolutionary development of ARS from recursive spatial trees to the Aero architecture, which utilizes a 1024-entry division-free quantile mapping table to improve robustness under skewed distributions while maintaining competitive performance against state-of-the-art sorters such as IPS4o.
+Furthermore, we introduce ARS Exp D, a low-latency streaming architecture based on epoch micro-batching and concurrent spatial consolidation, enabling sustained high-throughput ingestion with bounded memory growth.
+Experimental evaluation on modern multi-core hardware demonstrates near-linear throughput scaling, competitive streaming latency, and significant speedups on complex and high-entropy workloads, suggesting that spatial classification is a practical alternative to comparison-driven sorting for modern hardware-conscious data systems.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Sorting Algorithms, Cache-Conscious Algorithms, Distribution-Adaptive Sorting, Spatial Mapping, Parallel Sorting, Streaming Algorithms, Concurrent Systems.
+\end{IEEEkeywords}
+
+\input{sections/01_introduction}
+\input{sections/02_evolutionary_history}
+\input{sections/03_methodology}
+\input{sections/04_theoretical_analysis}
+\input{sections/05_experimental_evaluation}
+\input{sections/06_limitations}
+\input{sections/07_future_directions}
+\input{sections/08_conclusion}
+
+\bibliography{references}
+\end{document}

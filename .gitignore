@@ -209,3 +209,9 @@ __marimo__/
 
 # none-ls cache
 **/.null-ls_*
+
+# Custom project ignores
+*.zip
+.tmp_compress/
+.tmp_compress_1/
+

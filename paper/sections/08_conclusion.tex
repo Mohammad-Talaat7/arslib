@@ -1,0 +1,15 @@
+\section{Conclusion and Impact}
+The development of the Adaptive Range Sorting (ARS) phylogeny explores an approach to algorithmic complexity that emphasizes hardware-aligned spatial mapping. By moving away from the comparison-based paradigm, we have shown that sorting can scale near-linearly with $N$ while maintaining resilience against stochastic variance.
+
+\subsection{Summary of Impact}
+The impact of this research is observed in three primary dimensions:
+\begin{enumerate}
+    \item \textbf{Instruction Efficiency}: Through the Fused Analyze Pass (Gen 5) and Aero Mapping (Gen 6), the logical work of sorting is reduced by 50--70\% compared to standard unstable sort implementations. This reduction in instruction count supports lower power consumption and improved CPU utilization.
+    \item \textbf{Real-Time Streamability}: ARS Exp D demonstrates that parallel sorting can be integrated into batch processing pipelines. Epoch-based micro-batching allows for nanosecond-scale sorting within the ingestion path of high-velocity data streams.
+    \item \textbf{Distribution Robustness}: The Aero architecture's division-free quantile table addresses the performance degradation traditionally associated with range-based sorters on non-uniform data. This allows ARS to achieve performance parity with state-of-the-art tree-based sorters like IPS4o on bell-curve data while providing speedups on non-uniform and complex-type workloads.
+    \end{enumerate}
+
+    \subsection{Future Work}
+    While the ARS phylogeny has shown competitive performance on CPU architectures, the spatial mapping paradigm is also applicable to massive parallelization on GPU-based SIMT (Single Instruction, Multiple Threads) hardware. Future work will investigate the implementation of the Aero architecture within the CUDA and Vulkan ecosystems, as well as the integration of specialized partitioning logic to address high-cardinality duplicate distributions.
+
+    In conclusion, ARS provides evidence that high-throughput, distribution-resilient sorting is a practical approach for modern data systems where data can be projected into a monotonic spatial domain.

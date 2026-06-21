@@ -1,0 +1,52 @@
+\section{Future Directions}
+The ARS framework establishes a hardware-conscious spatial classification architecture for parallel and streaming data processing.
+While the present work focuses primarily on the Aero and Exp D implementations, several promising research directions remain open.
+
+\subsection{Recursive Cache-Aware Refinement}
+The experiments presented in this paper indicate that cache residency plays a critical role in determining refinement efficiency.
+As dataset sizes continue to grow, partition sizes may eventually exceed cache capacity, exposing additional memory latency and reducing throughput.
+
+Exp A explored recursive spatial refinement as a mechanism for preserving cache-local execution by recursively repartitioning oversized bins.
+Future work may investigate adaptive cache-aware recursion strategies, dynamic refinement thresholds, and formal cache-complexity models capable of predicting optimal partition hierarchies across diverse hardware platforms.
+
+\subsection{Hierarchical Memory Staging}
+The scatter phase remains fundamentally constrained by memory-system behavior.
+Exp B demonstrated that software write-combining buffers can significantly improve memory-bus utilization by transforming fragmented writes into contiguous cache-line bursts.
+
+Future research may explore multi-level staging architectures that explicitly leverage L1, L2, and LLC hierarchies, as well as NUMA-aware staging strategies designed for high-core-count processors and multi-socket systems.
+
+\subsection{Entropy-Adaptive Execution}
+One of the most promising exploratory directions is the development of workload-adaptive execution policies.
+Exp C demonstrated that runtime entropy estimation can be used to dynamically select different execution strategies depending on dataset characteristics.
+
+Future systems may extend this concept by incorporating online learning, adaptive cost models, or lightweight predictive heuristics capable of selecting partitioning factors, refinement strategies, and mapping functions automatically at runtime.
+Such mechanisms would transform ARS from a static architecture into a self-optimizing data-processing framework.
+
+\subsection{Distributed Spatial Classification}
+The current implementation targets shared-memory multi-core systems.
+However, the spatial partitioning model naturally exposes coarse-grained data parallelism that may be suitable for distributed environments.
+
+Future work may investigate cluster-scale variants of ARS in which spatial bins are distributed across nodes and refined independently.
+Such architectures could potentially combine local cache-efficient classification with distributed merge-free aggregation strategies.
+
+\subsection{Accelerator-Aware Implementations}
+The ARS execution model consists primarily of histogram generation, prefix-sum computation, and spatial scattering, all of which map naturally to massively parallel hardware.
+
+Future implementations may investigate GPU, FPGA, and heterogeneous CPU-GPU variants of the framework.
+In particular, the division-free classification model employed by Aero appears well suited to SIMD and SIMT execution environments where predictable control flow is essential for maintaining high throughput.
+
+\subsection{Persistent Streaming Architectures}
+Exp D demonstrates that spatial classification can support high-throughput streaming ingestion through epoch-based micro-batching and concurrent spatial consolidation.
+However, the current design remains an in-memory architecture.
+
+Future research may investigate persistent spatial registries, fault-tolerant consolidation pipelines, and disk-backed run management systems.
+Such extensions could enable ARS to serve as the foundation for large-scale streaming databases, event-processing systems, and real-time analytical platforms.
+
+\subsection{Learned Spatial Mapping Functions}
+Aero currently utilizes a sampled quantile lookup table to approximate distribution-aware partitioning.
+An alternative direction involves replacing static lookup tables with lightweight learned models---drawing inspiration from learned database indexes like the Recursive Model Index (RMI) \cite{kraska2018case} and learned sorting algorithms like LearnedSort \cite{khalifa2020learnedsort}---capable of predicting optimal spatial mappings directly from observed data characteristics.
+
+The integration of learned mapping functions may further improve occupancy balance, reduce sampling overhead, and enable adaptive behavior under rapidly changing distributions while preserving the constant-time classification properties of the framework.
+
+Overall, the exploratory architectures and extensions presented throughout this work suggest that ARS should be viewed not as a single sorting algorithm, but as a broader family of hardware-conscious spatial processing architectures.
+The Aero and Exp D implementations represent only a subset of this design space, leaving substantial opportunities for future investigation across parallel, distributed, and streaming data-processing environments.

@@ -1,0 +1,199 @@
+\section{Architectural Design} \label{sec:methodology}
+The ARS engine is designed to prioritize memory locality, branch efficiency, and scalable parallel execution.
+Unlike comparison-based sorters, ARS transforms sorting into a spatial classification problem through monotonic key projection and fixed-cost partition mapping.
+
+At a high level, the framework operates through four primary stages:
+\begin{enumerate}
+  \item Spatial Key Projection
+  \item Fused Analysis and Histogram Generation
+  \item Contention-Free Scatter Partitioning
+  \item Localized Refinement
+\end{enumerate}
+
+\cref{fig:pipeline} summarizes the execution flow of the architecture.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+    node distance=0.7cm and 0.4cm,
+    process/.style={rectangle, draw, thick, fill=blue!10, text width=2.5cm, align=center, minimum height=0.8cm, font=\footnotesize},
+    branch/.style={rectangle, draw, dashed, thick, fill=teal!10, text width=1.9cm, align=center, minimum height=0.8cm, font=\footnotesize},
+    data/.style={ellipse, draw, thick, fill=gray!10, text width=1.6cm, align=center, font=\scriptsize},
+    arrow/.style={-Stealth, thick},
+    label_style/.style={font=\tiny\itshape, color=gray}
+]
+
+    % --- CORE PIPELINE ---
+    \node (input) [data] {Input Data $S$};
+    \node (project) [process, below=of input] {Spatial Projection $\mathcal{K}(x)$};
+    \node (analyze) [process, below=of project] {Fused Analyze Pass};
+    \node (hist) [process, below=of analyze] {Histogram Generation};
+    \node (prefix) [process, below=of hist] {Parallel Prefix Sum};
+    \node (scatter) [process, below=of prefix] {Scatter Partitioning};
+    \node (refine) [process, below=of scatter] {Local Refinement};
+    \node (output) [data, below=of refine] {Sorted Output $S'$};
+
+    % --- AERO BRANCH ---
+    \node (aero) [branch, right=of analyze] {Aero Branch: Quantile Table};
+
+    % --- CONNECTIONS ---
+    \draw [arrow] (input) -- (project);
+    \draw [arrow] (project) -- (analyze);
+    \draw [arrow] (analyze) -- (hist);
+    \draw [arrow] (analyze) -- (aero) node[midway, above, label_style] {non-uniform};
+    \draw [arrow] (aero) |- (hist);
+    \draw [arrow] (hist) -- (prefix);
+    \draw [arrow] (prefix) -- (scatter);
+    \draw [arrow] (scatter) -- (refine);
+    \draw [arrow] (refine) -- (output);
+
+    % --- ENCAPSULATION ---
+    \node (streaming) [draw, orange!70, thick, dotted, inner sep=0.12cm, fit=(input) (project), label={[orange!70, font=\bfseries, xshift=1.1cm]right:Exp D Ingestion}] {};
+    \node (registry) [draw, purple!70, thick, dotted, inner sep=0.12cm, fit=(prefix) (scatter) (refine), label={[purple!70, font=\bfseries, xshift=1.1cm]right:Shadow Merging}] {};
+
+\end{tikzpicture}
+\caption{The ARS execution pipeline. The framework transforms sorting into a hardware-conscious spatial classification pipeline built around parallel partitioning and cache-efficient memory movement.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Spatial Classification Pipeline}
+ARS begins by projecting arbitrary data types into a monotonic 64-bit spatial domain using a mapping function $K : T \rightarrow \mathbb{U}_{64}$.
+This projection enables ARS to preserve ordering relationships while enabling the framework to operate on hardware-efficient integer representations.
+
+For primitive integer types, $K$ utilizes bit-bias transformations.
+For floating-point values, the mapping preserves IEEE-754 ordering through exponent-aware bit manipulation.
+For strings and complex data types, ARS extracts a fixed-width 8-byte prefix representation~\cite{graefeImplementingSortingDatabase2006}.
+Although prefix collisions may require fallback refinement using full-value comparison sorting, the majority of the execution pipeline remains classification-driven.
+
+The execution pipeline begins with a \textit{Fused Analyze Pass}, which combines boundary detection ($\min/\max$), sortedness verification, entropy estimation, and spatial key extraction into a single parallel traversal.
+This design minimizes redundant memory passes while improving cache reuse and memory-bandwidth efficiency.
+
+During this stage, extracted spatial keys are cached in a hardware-aligned buffer, transforming complex-type sorting into a high-throughput integer permutation problem.
+This optimization is particularly important for variable-length data types such as strings, where memory traversal costs often dominate arithmetic costs.
+
+Following analysis, ARS performs a \textbf{Histogram-based Parallel Prefix Sum} \eqref{eq:prefix_sum}, where each worker thread computes a local histogram $C_{t,b}$ for its assigned partition, which is then aggregated into a global offset table $O_{t,b}$:
+
+\begin{equation} \label{eq:prefix_sum}
+O_{t,b} =
+\sum_{i=0}^{b-1}
+\sum_{j=0}^{T-1}
+C_{j,i}
++
+\sum_{j=0}^{t-1}
+C_{j,b}
+\end{equation}
+
+This formulation allows threads to scatter elements into the destination buffer without atomic synchronization, ensuring contention-free parallel partitioning.
+
+To mitigate random-write pressure during the scatter phase, ARS utilizes small thread-local staging buffers as stack-allocated blocks ($L=8$).
+Instead of immediately writing elements to global memory, each thread accumulates small cache-resident blocks before flushing them in contiguous bursts.
+This software write-combining strategy reduces store-buffer congestion, minimizes cache-line contention, and improves memory-bus utilization during high-throughput partitioning~\cite{nybergAlphasortCachesensitiveParallel1995}.
+
+After partitioning, refinement is applied locally within each spatial bin, which currently utilizes comparison-based sub-sorters optimized for cache-resident execution.
+For primitive numeric types, partitions are typically refined using PDQsort, while complex types may utilize lexicographic refinement on the original values.
+For moderate dataset scales, these bins remain sufficiently small to fit within the CPU cache hierarchy, allowing the final comparison-based refinement stage to execute efficiently with minimal memory stalls.
+
+\subsection{Aero: Quantile-Adaptive Classification}
+While the core ARS pipeline performs efficiently under approximately uniform distributions, linear mapping functions may produce unstable occupancy under skewed workloads such as Gaussian or Zipfian datasets.
+This imbalance can create localized partition congestion and reduce parallel efficiency.
+
+In Aero (Gen 6) we address this limitation through quantile-adaptive classification.
+Instead of relying solely on linear spatial partitioning, Aero utilizes a cache-resident 1024-entry division-free lookup table that approximates the inverse cumulative distribution function $\Phi^{-1}$.
+
+The mapping process begins by sampling a small subset of the dataset ($m = 256$) to estimate the observed distribution.
+A 128-bit reciprocal fixed-point multiplier $R$ is then computed from the sampled range.
+The resulting mapping function is defined as:
+
+\begin{equation}
+\mathcal{B}(x) =
+\mathcal{L}
+\left[
+\left\lfloor
+  (\mathcal{K}(x) - \min) \cdot \mathcal{R} \cdot 2^{-64}
+\right\rfloor
+\right]
+\end{equation}
+
+where $\mathcal{L}$ represents the quantile lookup table.
+
+By constraining the lookup table to approximately 2KB, Aero ensures that the structure remains pinned within the L1 data cache during classification.
+This allows the framework to maintain low-latency constant-time mapping while significantly improving occupancy stability under non-uniform distributions.
+
+\cref{alg:aero_mapping} details the Aero classification procedure.
+
+\begin{algorithm}
+\caption{Aero Division-Free Quantile Mapping}
+\label{alg:aero_mapping}
+\begin{algorithmic}[1]
+\REQUIRE Input key $k$, Minimum Value $min$, Multiplier $R$, Lookup Table $L$
+\ENSURE Bin index $b$
+\STATE $diff \gets k - min$
+\STATE $idx \gets (diff \cdot R) \gg 64$
+\IF{$isUniform$}
+    \STATE $b \gets \min(idx, numBins - 1)$
+\ELSE
+    \STATE $tIdx \gets \min(idx, 1023)$
+    \STATE $b \gets L[tIdx]$
+\ENDIF
+\RETURN $b$
+\end{algorithmic}
+\end{algorithm}
+
+To maximize throughput, Aero currently utilizes an auxiliary scratch-buffer scatter strategy.
+While in-place permutation is theoretically possible, the synchronization and cycle-following overhead associated with swap-based movement often outweighs the memory savings.
+By utilizing contiguous unidirectional writes, Aero allows hardware prefetchers and write-combining mechanisms to operate at peak efficiency.
+
+\textbf{Proposition 1.}
+\textit{ARS preserves stability when both the scatter phase and the refinement stage maintain the relative order of equivalent keys.}
+
+\textbf{Proof Sketch.}
+The scatter phase preserves the original insertion order of elements assigned to the same spatial partition. Consequently, stability depends only on the refinement strategy applied within each partition. When a stable refinement algorithm such as Timsort is used, the overall ARS pipeline remains stable. When an unstable refinement algorithm such as PDQsort is selected, stability is not guaranteed. \hfill $\square$
+
+\subsection{Exp D: Streaming Spatial Consolidation}
+Rather than performing sorting as a monolithic terminal operation, Exp D shifts consolidation into a concurrent background pipeline through epoch-based micro-batching and tiered spatial run compaction.
+
+Incoming elements are first accumulated in thread-local buffers referred to as \textit{Epochs}.
+Once a buffer reaches its threshold $N_e$ (defaulting to $131,072$ in the implementation, with $32,768$ verified as optimal for latency-sensitive workloads in our Pareto analysis), the epoch is atomically dispatched to a background work queue~\cite{zahariaDiscretizedStreamsFaulttolerant2013}.
+This micro-batching strategy preserves sequential memory access patterns while ensuring that ingestion threads remain decoupled from background consolidation work.
+
+The background worker pool continuously monitors the work queue and performs concurrent spatial consolidation through a thread-safe \textit{Spatial Run Registry} organized as a bucketed hash map.
+Adjacent runs are identified using bit-mask proximity checks on the high-order spatial key segments (specifically, shifting by $44$ bits).
+Each bucket in the registry implements a granular, lockable \textit{Tiered Spatial Bucket} to mitigate lock contention.
+Buckets maintain two compaction tiers ($L_0$ and $L_1$).
+When the $L_0$ tier accumulates a threshold count (typically $C = 8$ runs), a worker thread flushes and compacts them into a single consolidated run, which is subsequently merged into the $L_1$ tier.
+Additionally, the consolidation process preserves global ordering guarantees by maintaining spatially ordered run boundaries throughout the merge hierarchy.
+
+\cref{alg:expd_merge} summarizes the concurrent tiered consolidation process.
+
+\begin{algorithm}
+\caption{Concurrent Tiered Spatial Consolidation}
+\label{alg:expd_merge}
+\begin{algorithmic}[1]
+\REQUIRE Work Queue $Q$, Bucketed Spatial Registry $B$
+\LOOP
+    \STATE $epoch \gets Q.pop()$
+    \STATE $SortedEpoch \gets \text{ARS}(epoch)$
+    \STATE $newRun \gets \text{SpatialRun}(SortedEpoch)$
+    \STATE $key \gets newRun.min \gg 44$
+    \STATE $bucket \gets B.\text{get\_or\_create}(key)$
+    \STATE $bucket.\text{lock}()$
+    \STATE $bucket.L_0.\text{push}(newRun)$
+    \IF{$bucket.L_0.\text{len}() \geq 8$}
+        \STATE $runs \gets bucket.L_0.\text{drain}()$
+        \STATE $merged \gets runs[0]$
+        \FORALL{$r \in runs[1..7]$}
+            \STATE $merged \gets \text{merge}(merged, r)$
+        \ENDFOR
+        \IF{$bucket.L_1 \text{ is present}$}
+            \STATE $bucket.L_1 \gets \text{merge}(bucket.L_1, merged)$
+        \ELSE
+            \STATE $bucket.L_1 \gets merged$
+        \ENDIF
+    \ENDIF
+    \STATE $bucket.\text{unlock}()$
+\ENDLOOP
+\end{algorithmic}
+\end{algorithm}
+
+This proactive consolidation strategy prevents unbounded run growth while reducing the final aggregation stage from an expensive multi-way merge into a bounded hierarchical merge process, conceptually similar to LSM-tree compaction~\cite{oneilLogstructuredMergetreeLSMtree1996}.
+As a result, Exp D enables sustained high-throughput ingestion while maintaining bounded memory growth and stable latency characteristics under bursty streaming workloads.

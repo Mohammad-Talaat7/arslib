@@ -1,0 +1,62 @@
+\section{Theoretical Analysis}
+
+\subsection{Mathematical Formalization}
+Let $S = (x_1, x_2, \dots, x_n)$ be an input sequence where $x_i \in \mathcal{T}$.
+ARS defines a monotonic mapping function $\mathcal{K}: \mathcal{T} \to \mathbb{U}_{64}$ such that $\forall x, y \in \mathcal{T} : x < y \implies \mathcal{K}(x) \leq \mathcal{K}(y)$.
+This projection transforms arbitrary data types into a discrete 64-bit integer space.
+By transforming sorting into a spatial classification problem, the framework reduces the frequency of data-dependent branching associated with comparison-driven partitioning.
+
+\subsection{Inverse-CDF Approximation Invariants}
+Traditional range-based sorters utilize a linear mapper $M(x) = \lfloor (x - \min) / \text{width} \rfloor$.
+Under non-uniform distributions (e.g., $X \sim \mathcal{N}(\mu, \sigma^2)$), this leads to bin-collisions at the distribution peaks, which increases the refinement cost toward comparison-based behavior due to excessive partition sizes. 
+
+The Aero architecture (Gen 6) addresses this variance by approximating the inverse-CDF function $\Phi^{-1}$ through a 1024-entry discrete lookup table $\mathcal{L}$ \cite{devroyeNonUniformRandomVariate1986}.
+The bin index is calculated as:
+\begin{equation}
+\mathcal{B}(x) = \mathcal{L} \left[ \lfloor (\mathcal{K}(x) - \min) \cdot \mathcal{R} \cdot 2^{-64} \rfloor \right]
+\end{equation}
+where $\mathcal{R}$ is the 128-bit fixed-point reciprocal of the global range. Since $\mathcal{L}$ is constructed such that each entry maps to a bin with probability $1/B$ under the observed sample distribution, the expected occupancy $E[|\mathcal{B}_j|]$ remains approximately balanced around $n/B$.
+This ensures that the computational work remains distributed even under highly skewed distributions.
+
+\subsection{Classification and I/O Complexity}
+The efficiency of distribution sorting on modern superscalar processors is governed less by operation counts and more by memory-hierarchy interactions.
+
+\subsubsection{I/O Model and Cache Complexity}
+In the External Memory Model, let $M$ be the size of the fast memory (cache) and $B_L$ be the size of a cache line.
+The partitioning phase performs $O(n/B_L)$ cache-line transfers under sequential access assumptions.
+Specifically, the Aero architecture performs a single out-of-place scatter pass.
+Unlike in-place Quicksort, which achieves high cache-temporal locality, ARS relies on \textbf{spatial write-combining}.
+By utilizing small intermediate software buffers, the algorithm converts random writes into contiguous cache-line bursts, effectively maximizing the utilization of the CPU's Store Buffers and reducing Translation Lookaside Buffer (TLB) pressure.
+
+\subsubsection{The "Memory Wall" Trade-off}
+The primary theoretical cost of ARS is the increase in memory traffic.
+To achieve near-linear performance, ARS performs approximately $2n$ reads (one for analysis, one for scatter) and $n$ writes.
+This memory traffic may exceed that of cache-efficient comparison sorters at small dataset scales.
+However, because the classification logic is division-free and branches are predictable, the framework achieves higher \textit{effective} memory-bus saturation, allowing it to outperform comparison-based sorters on sufficiently large workloads where instruction-level parallelism outweighs the additional memory traffic.
+
+\subsection{Complexity Analysis of Spatial Partitioning}
+\begin{theorem}
+In the Word RAM model, given a fixed bit-length $w$ for spatial keys and a partitioning factor $B$, the ARS framework bounds the computational work to $O(n)$ for fixed-width key sets.
+\end{theorem}
+
+\begin{proof}
+Let $T(n, w)$ be the work required to sort $n$ elements with $w$-bit keys.
+ARS utilizes a $B$-way spatial partition where each pass resolves $\log_2 B$ bits of the key space.
+The recurrence relation is:
+\begin{equation}
+T(n, w) = O(n) + \sum_{j=0}^{B-1} T(n_j, w - \log_2 B)
+\end{equation}
+where $\sum_{j=0}^{B-1} n_j = n$.
+The total number of recursive levels $k$ is $\lceil w / \log_2 B \rceil$.
+For architectural constants $w=64, B=1024$, $k$ is independent of $n$.
+Thus, the work is $\sum_{i=1}^{k} O(n) = O(k \cdot n) = O(n)$. 
+\end{proof}
+
+\textbf{Practical Performance Bound}: The Aero implementation typically uses a single-pass partition ($k=1$) followed by a comparison-based refinement.
+This yields an algorithmic complexity of $O(n + \sum |\mathcal{B}_j| \log |\mathcal{B}_j|)$, which simplifies to $O(n \log \frac{n}{B})$.
+For $B=1024$, the $\log \frac{n}{B}$ term remains sufficiently small in practice for $n < 10^9$, resulting in the \textbf{near-linear scaling} observed in practice. $\blacksquare$
+
+\subsection{Space Complexity}
+ARS Aero utilizes a spatial key cache of size $8n$ bytes and an auxiliary scratch buffer of size $n \cdot \text{size}(\mathcal{T})$, yielding an auxiliary space complexity of $O(n)$.
+This $2.5\times$ memory footprint compared to in-place sorters is the primary physical trade-off.
+We posit that this space-for-time exchange is justified in modern systems where DRAM capacity is abundant relative to per-core compute throughput.

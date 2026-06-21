@@ -1,0 +1,19 @@
+Algorithm,Pattern,Interference,P50(us),P99(us),Jitter(us),Throughput(ops/s),PeakMem(MB),Consolidation(ms)
+ARS Stream,Uniform,Clean,363,18527,3414.4,21698038.4,NaN,1048.1
+Chunked Merge,Uniform,Clean,1429,3033,553.4,14793498.0,NaN,2025.9
+LSM Proxy,Uniform,Clean,2019,3895,613.2,18029661.7,NaN,1460.4
+ARS Stream,Zipfian,Clean,1,70527,13943.0,12227878.7,NaN,691.7
+Chunked Merge,Zipfian,Clean,2,10,1.9,12259502.2,NaN,1883.9
+LSM Proxy,Zipfian,Clean,2,10,1.9,21065663.6,NaN,492.1
+ARS Stream,Bursty,Clean,0,1150,181.1,201153126.1,NaN,148.4
+Chunked Merge,Bursty,Clean,0,2359,641.9,82124859.3,NaN,383.0
+LSM Proxy,Bursty,Clean,0,3245,862.1,131654706.9,NaN,192.7
+ARS Stream,Uniform,Noisy,503,25231,4391.0,16239734.3,NaN,1448.9
+Chunked Merge,Uniform,Noisy,2241,4543,850.2,9365626.6,NaN,3201.4
+LSM Proxy,Uniform,Noisy,3141,5295,975.3,11669852.4,NaN,2229.6
+ARS Stream,Zipfian,Noisy,2,119999,23041.7,7899852.8,NaN,1086.9
+Chunked Merge,Zipfian,Noisy,4,19,3.5,8384636.9,NaN,2707.1
+LSM Proxy,Zipfian,Noisy,4,24,100.4,15097185.4,NaN,741.8
+ARS Stream,Bursty,Noisy,0,1376,339.8,153767956.1,NaN,192.5
+Chunked Merge,Bursty,Noisy,0,4803,1006.9,55510970.7,NaN,548.7
+LSM Proxy,Bursty,Noisy,0,7467,1513.3,80332469.8,NaN,310.5

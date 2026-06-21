@@ -1,0 +1,22 @@
+[package]
+name = "ars_scalability_benchmark"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+rayon = "1.10"
+rand = "0.8"
+rand_chacha = "0.3"
+rand_distr = "0.4"
+sys-info = "0.9"
+indicatif = "0.17"
+
+# Reuse algorithms and data generators from master_benchmark
+ars_master_benchmark = { path = "../master_benchmark" }
+ars_native = { path = "../implementations/ars_gen_3_apex_baseline" }
+ars_optimized_apex = { path = "../implementations/ars_gen_5_optimized_apex" }
+ars_gen_6_aero = { path = "../implementations/ars_gen_6_aero" }
+
+[[bin]]
+name = "scalability_engine"
+path = "src/main.rs"

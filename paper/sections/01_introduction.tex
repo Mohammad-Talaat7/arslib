@@ -1,0 +1,36 @@
+A single branch misprediction on a modern CPU can stall the execution pipeline for 15--20 cycles.
+For a dataset of $10^7$ elements, a standard Quicksort evaluates roughly 240 million comparisons, each serving as a potential pipeline stall \cite{kaligosiHowBranchMispredictions2006}.
+The motivation behind Adaptive Range Sorting (ARS) is to decouple the logical ordering of data from these costly arithmetic decisions.
+By reframing sorting from a "decision tree" problem into a "signal projection" problem, ARS drastically minimizes the need for unpredictable branching.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    width=0.98\linewidth, height=5.5cm,
+    enlarge x limits=0.2,
+    ylabel={Speedup vs. Quicksort (std) ($\times$)},
+    symbolic x coords={Random i64, Gaussian i64, Duplicates, Strings},
+    xtick=data,
+    nodes near coords,
+    nodes near coords align={vertical},
+    ymin=0, ymax=4.5,
+    grid=y,
+    major grid style={dashed, gray!30},
+    bar width=20pt,
+    fill=teal!70,
+    label style={font=\small},
+    tick label style={font=\small}
+]
+\addplot coordinates {(Random i64, 2.39) (Gaussian i64, 1.78) (Duplicates, 1.28) (Strings, 3.36)};
+\end{axis}
+\end{tikzpicture}
+\caption{The "Spatial Advantage": ARS Aero (Stable) Speedup across diverse data domains ($N=10^7$). The framework demonstrates significant gains in high-entropy and complex-type sorting while maintaining competitive parity on low-entropy duplicates.}
+\label{fig:teaser}
+\end{figure}
+
+\subsection{Architectural Paradigm: Spatial Mapping}
+ARS introduces a shift from comparative logic to \textbf{Spatial Mapping}.
+By projecting arbitrary data types into a linear spatial context using a monotonic mapping function $\mathcal{K}$ (formally defined in Section \ref{sec:methodology}), the input sequence is treated as a discrete stochastic signal \cite{DrDobbsJournala}.
+This allows the algorithm to analyze global data distributions and map values directly to hardware-aligned memory grids, achieving near-linear time performance across a broad class of stochastic distributions.
