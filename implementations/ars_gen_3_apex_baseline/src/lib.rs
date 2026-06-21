@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use rayon::prelude::*;
 use std::sync::atomic::AtomicU64;
 

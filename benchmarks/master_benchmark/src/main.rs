@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use ars_master_benchmark::{
     algorithms, gen_custom, gen_floats, gen_ints, gen_strings, get_metrics, reset_metrics,
     ARSValue, CustomRecord, HardwareMetrics, Profiler, Tracked,
@@ -5,13 +6,12 @@ use ars_master_benchmark::{
 use indicatif::{ProgressBar, ProgressStyle};
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
-use rand_distr::{Distribution, Exp, Normal};
+use rand_distr::Distribution;
 use rust_xlsxwriter::*;
 use std::fmt::Debug;
 use std::fs::{self, File};
 use std::io::Write;
 use std::time::Instant;
-use sys_info;
 
 // --- GLOBAL RESEARCH CONFIG ---
 const SEED: u64 = 42;
@@ -47,7 +47,7 @@ fn calculate_stats(durations: &[std::time::Duration]) -> (f64, f64, f64) {
     ms.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
     let min = ms[0];
-    let median = if ms.len() % 2 == 0 {
+    let median = if ms.len().is_multiple_of(2) {
         (ms[ms.len() / 2 - 1] + ms[ms.len() / 2]) / 2.0
     } else {
         ms[ms.len() / 2]
@@ -235,7 +235,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     for _ in 0..REPETITIONS {
                         match cat {
                             "i64" => {
-                                let mut data_raw = gen_ints(dist, n, &mut rng);
+                                let data_raw = gen_ints(dist, n, &mut rng);
                                 let mut data_tracked: Vec<Tracked<i64>> = data_raw
                                     .iter()
                                     .enumerate()
@@ -294,7 +294,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 std::thread::sleep(std::time::Duration::from_millis(500));
                             }
                             "f64" => {
-                                let mut data_raw = gen_floats(dist, n, &mut rng);
+                                let data_raw = gen_floats(dist, n, &mut rng);
                                 let mut data_tracked: Vec<Tracked<f64>> = data_raw
                                     .iter()
                                     .enumerate()
@@ -417,7 +417,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 std::thread::sleep(std::time::Duration::from_millis(1000));
                             }
                             "Custom" => {
-                                let mut data_raw = gen_custom(dist, n, &mut rng);
+                                let data_raw = gen_custom(dist, n, &mut rng);
                                 let mut data_tracked: Vec<Tracked<CustomRecord>> = data_raw
                                     .into_iter()
                                     .enumerate()

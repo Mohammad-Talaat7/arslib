@@ -1,4 +1,5 @@
-use ars_master_benchmark::{algorithms, gen_ints, HardwareMetrics, Profiler};
+#![allow(warnings)]
+use ars_master_benchmark::{algorithms, gen_ints, Profiler};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 

@@ -1,3 +1,4 @@
+#![allow(warnings)]
 pub use ars_native::{ARSValue, COMPARISONS, MOVES};
 use rayon::prelude::*;
 use std::mem::MaybeUninit;
@@ -39,14 +40,14 @@ impl ARSOptimizedApex {
         }
 
         let num_threads = rayon::current_num_threads();
-        let num_bins = (n / 512).max(256).min(1024).next_power_of_two();
+        let num_bins = (n / 512).clamp(256, 1024).next_power_of_two();
         let range = (max_v - min_v).max(1);
 
         let shift_bits = 64;
         let multiplier = (((num_bins - 1) as u128) << shift_bits) / range as u128;
 
         // 2. Parallel Histogram
-        let chunk_size = (n + num_threads - 1) / num_threads;
+        let chunk_size = n.div_ceil(num_threads);
         let thread_hists: Vec<Vec<usize>> = (0..num_threads)
             .into_par_iter()
             .map(|t_idx| {

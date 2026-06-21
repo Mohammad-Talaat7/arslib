@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use ars_apex_vs_others::{
     algorithms, get_metrics, reset_metrics, ARSValue, CustomRecord, HardwareMetrics, Profiler,
     Tracked,
@@ -11,7 +12,6 @@ use std::fmt::Debug;
 use std::fs::{self, File};
 use std::io::Write;
 use std::time::Instant;
-use sys_info;
 
 // --- GLOBAL RESEARCH CONFIG ---
 const SEED: u64 = 42;
@@ -299,6 +299,7 @@ fn run_alg_f64(
 #[derive(PartialEq, PartialOrd, Clone, Debug)]
 struct OrderedF64(f64);
 impl Eq for OrderedF64 {}
+#[allow(clippy::derive_ord_xor_partial_ord)]
 impl Ord for OrderedF64 {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.0
@@ -577,11 +578,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 if !name.contains("Radix")
                                     && !name.contains("RDST")
                                     && !name.contains("Voracious")
-                                {
-                                    if n <= 100_000 {
+                                    && n <= 100_000 {
                                         validate_sorted(&data_tracked, name);
                                     }
-                                }
                             }
                             "String" => {
                                 let mut data_raw = gen_strings(dist, n, &mut rng);
@@ -637,11 +636,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 if !name.contains("Radix")
                                     && !name.contains("AFSort")
                                     && !name.contains("UniversalRadix")
-                                {
-                                    if n <= 100_000 {
+                                    && n <= 100_000 {
                                         validate_sorted(&data_tracked, name);
                                     }
-                                }
                             }
                             "Custom" => {
                                 let mut data_raw = gen_custom(dist, n, &mut rng);
@@ -689,11 +686,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     }
                                 }
 
-                                if !name.contains("Spreadsort") {
-                                    if n <= 100_000 {
+                                if !name.contains("Spreadsort")
+                                    && n <= 100_000 {
                                         validate_sorted(&data_tracked, name);
                                     }
-                                }
                             }
                             _ => unreachable!(),
                         }

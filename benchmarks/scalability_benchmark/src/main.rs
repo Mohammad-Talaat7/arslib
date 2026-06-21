@@ -1,11 +1,12 @@
-use ars_master_benchmark::{algorithms, gen_floats, gen_ints};
+#![allow(warnings)]
+use ars_master_benchmark::{algorithms, gen_ints};
 use indicatif::{ProgressBar, ProgressStyle};
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
 use rayon::ThreadPoolBuilder;
 use std::fs::{self, File};
 use std::io::Write;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 const SEED: u64 = 42;
 const REPETITIONS: usize = 3;

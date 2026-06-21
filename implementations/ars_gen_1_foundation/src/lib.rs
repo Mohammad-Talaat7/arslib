@@ -1,3 +1,5 @@
+#![allow(warnings)]
+
 use ars_native::ARSValue;
 use pyo3::prelude::*;
 use pyo3::types::PyList;

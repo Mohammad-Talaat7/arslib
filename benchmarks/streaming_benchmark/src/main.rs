@@ -1,19 +1,17 @@
+#![allow(warnings)]
 use ars_native::ARSValue;
 use ars_stream_microbatch::ARSStreamer;
-use crossbeam_channel::{bounded, Receiver, Sender};
+use crossbeam_channel::{bounded, Sender};
 use hdrhistogram::Histogram;
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
-use std::cmp::Reverse;
-use std::collections::BinaryHeap;
 use std::fmt::Debug;
 use std::fs::{self, File};
 use std::io::Write;
-use std::sync::{Arc, Mutex};
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 mod hardware_profiler;
-use hardware_profiler::{HardwareMetrics, Profiler};
+use hardware_profiler::Profiler;
 
 // --- CONFIG ---
 const STREAM_SIZE: usize = 100_000_000; // Extreme Scale (100M)
@@ -60,7 +58,7 @@ impl StreamGenerator<i64> {
                 }
             }
             StreamPattern::Bursty => {
-                if self.current_step % 10 == 0 {
+                if self.current_step.is_multiple_of(10) {
                     for _ in 0..n {
                         batch.push(self.rng.gen());
                     }

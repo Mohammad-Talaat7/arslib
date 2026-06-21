@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use perf_event::events::Hardware;
 use perf_event::{Builder, Counter, Group};
 

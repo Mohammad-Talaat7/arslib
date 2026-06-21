@@ -1,10 +1,10 @@
+#![allow(warnings)]
 use ars_native::{ARSApex, ARSValue};
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
 use rayon::prelude::*;
 use std::fmt::Debug;
 use std::time::{Duration, Instant};
-use sys_info;
 
 // --- CONFIGURATION ---
 const REPETITIONS: usize = 3;

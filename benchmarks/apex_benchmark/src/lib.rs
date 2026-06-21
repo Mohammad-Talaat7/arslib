@@ -1,3 +1,4 @@
+#![allow(warnings)]
 pub use ars_native::{ARSValue, COMPARISONS, MOVES};
 use std::fmt::Debug;
 use std::sync::atomic::Ordering;
@@ -151,6 +152,7 @@ pub mod algorithms {
         #[derive(Clone, PartialEq, PartialOrd)]
         struct Wrapper<'a, T>(&'a T);
         impl<'a, T: PartialOrd> Eq for Wrapper<'a, T> {}
+        #[allow(clippy::derive_ord_xor_partial_ord)]
         impl<'a, T: PartialOrd> Ord for Wrapper<'a, T> {
             fn cmp(&self, other: &Self) -> std::cmp::Ordering {
                 self.0

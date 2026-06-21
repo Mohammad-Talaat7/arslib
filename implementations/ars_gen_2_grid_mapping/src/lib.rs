@@ -1,3 +1,5 @@
+#![allow(warnings)]
+
 use ahash::AHasher;
 use ars_native::ARSValue;
 use hashbrown::HashMap;

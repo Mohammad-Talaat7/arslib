@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use std::time::Instant;
 use ars_master_benchmark::{algorithms, Tracked};
 use rand::Rng;

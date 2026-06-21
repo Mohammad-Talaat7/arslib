@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, Exp, Normal};
@@ -154,7 +155,7 @@ pub fn gen_strings(dist: &str, n: usize, rng: &mut ChaCha8Rng) -> Vec<String> {
             let prefix: String = (0..50)
                 .map(|_| rng.sample(rand::distributions::Alphanumeric) as char)
                 .collect();
-            let mut p_collision_pool: Vec<String> = (0..pool_size)
+            let p_collision_pool: Vec<String> = (0..pool_size)
                 .map(|_| {
                     let suffix: String = (0..10)
                         .map(|_| rng.sample(rand::distributions::Alphanumeric) as char)

@@ -1,3 +1,4 @@
+#![allow(warnings)]
 pub use ars_native::{ARSValue, COMPARISONS, MOVES};
 use rayon::prelude::*;
 use std::mem::MaybeUninit;

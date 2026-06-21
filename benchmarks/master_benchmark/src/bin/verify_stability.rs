@@ -1,9 +1,9 @@
+#![allow(warnings)]
 use ars_master_benchmark::{
-    algorithms, gen_strings, get_metrics, reset_metrics, ARSValue, Tracked,
+    algorithms, gen_strings, Tracked,
 };
 use rand::prelude::*;
 use rand_chacha::ChaCha8Rng;
-use std::fmt::Debug;
 use std::time::Instant;
 
 extern "C" {

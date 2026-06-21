@@ -1,3 +1,4 @@
+#![allow(warnings)]
 use ars_master_benchmark::Tracked;
 use ars_native::{ARSApex, ARSValue};
 
