@@ -1,5 +1,5 @@
 #![allow(warnings)]
-use ars_native::ARSValue;
+use arslib::ARSValue;
 use ars_stream_microbatch::ARSStreamer;
 use crossbeam_channel::{bounded, Sender};
 use hdrhistogram::Histogram;

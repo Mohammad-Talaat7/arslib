@@ -29,7 +29,6 @@ authors = ["Mohammad T. Ismael"]
 [dependencies]
 rayon = "1.10"
 num-traits = "0.2"
-ars_native = { path = "implementations/ars_gen_3_apex_baseline" }
 rand = "0.8"
 rand_chacha = "0.3"
 rand_distr = "0.4"

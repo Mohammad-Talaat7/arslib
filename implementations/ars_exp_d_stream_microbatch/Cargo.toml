@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 rayon = "1.10"
 crossbeam-channel = "0.5"
-ars_native = { path = "../ars_gen_3_apex_baseline" }
+arslib = { path = "../../" }
 ars_optimized_apex = { path = "../ars_gen_5_optimized_apex" }
 
 [lib]

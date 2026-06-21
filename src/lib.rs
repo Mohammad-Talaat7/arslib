@@ -1,4 +1,54 @@
-pub use ars_native::{ARSValue, COMPARISONS, MOVES};
+use std::sync::atomic::AtomicU64;
+pub static COMPARISONS: AtomicU64 = AtomicU64::new(0);
+pub static MOVES: AtomicU64 = AtomicU64::new(0);
+
+pub trait ARSValue: Clone + Send + Sync {
+    fn to_spatial_u64(&self) -> u64;
+}
+
+impl ARSValue for i64 {
+    #[inline(always)]
+    fn to_spatial_u64(&self) -> u64 {
+        (*self as u64).wrapping_add(i64::MIN as u64)
+    }
+}
+impl ARSValue for u64 {
+    #[inline(always)]
+    fn to_spatial_u64(&self) -> u64 {
+        *self
+    }
+}
+impl ARSValue for i32 {
+    #[inline(always)]
+    fn to_spatial_u64(&self) -> u64 {
+        (*self as u64).wrapping_add(i32::MIN as u64)
+    }
+}
+impl ARSValue for f64 {
+    #[inline(always)]
+    fn to_spatial_u64(&self) -> u64 {
+        let u = self.to_bits();
+        if u & 0x8000_0000_0000_0000 != 0 {
+            !u
+        } else {
+            u | 0x8000_0000_0000_0000
+        }
+    }
+}
+
+impl ARSValue for String {
+    #[inline(always)]
+    fn to_spatial_u64(&self) -> u64 {
+        let b = self.as_bytes();
+        let mut res = 0u64;
+        let len = b.len().min(8);
+        for (i, &val) in b.iter().enumerate().take(len) {
+            res |= (val as u64) << (56 - i * 8);
+        }
+        res
+    }
+}
+
 use rayon::prelude::*;
 use std::mem::MaybeUninit;
 use std::ptr;

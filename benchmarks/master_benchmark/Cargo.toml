@@ -10,6 +10,7 @@ rand_chacha = "0.3"
 rand_distr = "0.4"
 sys-info = "0.9"
 # Core Lineage
+arslib = { path = "../../" }
 ars_native = { path = "../../implementations/ars_gen_3_apex_baseline" }
 ars_recursive = { path = "../../implementations/ars_gen_1_foundation" }
 ars_spatial_grid = { path = "../../implementations/ars_gen_2_grid_mapping" }

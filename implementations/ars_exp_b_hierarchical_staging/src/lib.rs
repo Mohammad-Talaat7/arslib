@@ -1,5 +1,5 @@
 #![allow(warnings)]
-pub use ars_native::{ARSValue, COMPARISONS, MOVES};
+pub use arslib::{ARSValue, COMPARISONS, MOVES};
 use rayon::prelude::*;
 use std::mem::MaybeUninit;
 use std::ptr;

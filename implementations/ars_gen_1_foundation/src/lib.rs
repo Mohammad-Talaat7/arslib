@@ -1,6 +1,6 @@
 #![allow(warnings)]
 
-use ars_native::ARSValue;
+use arslib::ARSValue;
 use pyo3::prelude::*;
 use pyo3::types::PyList;
 use rayon::prelude::*;

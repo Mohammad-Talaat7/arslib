@@ -1,5 +1,5 @@
 #![allow(warnings)]
-pub use ars_native::{ARSValue, COMPARISONS, MOVES};
+pub use arslib::{ARSValue, COMPARISONS, MOVES};
 use ars_optimized_apex::ARSOptimizedApex;
 use crossbeam_channel::Sender;
 use rayon::prelude::*;

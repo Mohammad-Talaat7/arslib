@@ -15,7 +15,7 @@ rand_distr = "0.4"
 chrono = "0.4"
 
 # Workspace Members
-ars_native = { path = "../../implementations/ars_gen_3_apex_baseline" }
+arslib = { path = "../../" }
 ars_master_benchmark = { path = "../master_benchmark" }
 ars_stream_microbatch = { path = "../../implementations/ars_exp_d_stream_microbatch" }
 ars_optimized_apex = { path = "../../implementations/ars_gen_5_optimized_apex" }

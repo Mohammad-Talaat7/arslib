@@ -13,6 +13,7 @@ sys-info = "0.9"
 # Target ARS Algorithm
 ars_optimized_apex = { path = "../../implementations/ars_gen_5_optimized_apex" }
 ars_gen_6_aero = { path = "../../implementations/ars_gen_6_aero" }
+arslib = { path = "../../" }
 ars_native = { path = "../../implementations/ars_gen_3_apex_baseline" }
 
 # Comparison Algorithms

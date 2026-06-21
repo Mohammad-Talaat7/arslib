@@ -13,7 +13,7 @@ indicatif = "0.17"
 
 # Reuse algorithms and data generators from master_benchmark
 ars_master_benchmark = { path = "../master_benchmark" }
-ars_native = { path = "../../implementations/ars_gen_3_apex_baseline" }
+arslib = { path = "../../" }
 ars_optimized_apex = { path = "../../implementations/ars_gen_5_optimized_apex" }
 ars_gen_6_aero = { path = "../../implementations/ars_gen_6_aero" }
 

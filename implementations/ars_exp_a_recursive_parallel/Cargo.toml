@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 rayon = "1.10"
 num-traits = "0.2"
-ars_native = { path = "../ars_gen_3_apex_baseline" }
+arslib = { path = "../../" }
 
 [lib]
 name = "ars_recursive_parallel"

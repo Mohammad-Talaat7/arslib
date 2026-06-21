@@ -1,7 +1,7 @@
 #![allow(warnings)]
 
 use ahash::AHasher;
-use ars_native::ARSValue;
+use arslib::ARSValue;
 use hashbrown::HashMap;
 use pyo3::prelude::*;
 use pyo3::types::PyList;

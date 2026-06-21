@@ -79,8 +79,8 @@ checksum = "f02882884d3e1bc524fb12c79f107f6ad0e1cfd498c536ffb494301740995dfe"
 name = "ars_adaptive_hierarchical"
 version = "0.18.0"
 dependencies = [
- "ars_native",
  "ars_optimized_apex",
+ "arslib",
  "num-traits",
  "rayon",
 ]
@@ -94,6 +94,7 @@ dependencies = [
  "ars_gen_6_aero",
  "ars_native",
  "ars_optimized_apex",
+ "arslib",
  "bytemuck",
  "glidesort",
  "hashbrown 0.14.5",
@@ -122,7 +123,7 @@ dependencies = [
 name = "ars_gen_6_aero"
 version = "6.0.0"
 dependencies = [
- "ars_native",
+ "arslib",
  "num-traits",
  "rand 0.8.6",
  "rand_chacha",
@@ -134,8 +135,8 @@ dependencies = [
 name = "ars_hierarchical_staging"
 version = "0.17.0"
 dependencies = [
- "ars_native",
  "ars_optimized_apex",
+ "arslib",
  "num-traits",
  "rayon",
 ]
@@ -155,6 +156,7 @@ dependencies = [
  "ars_recursive_parallel",
  "ars_spatial_grid",
  "ars_stream_microbatch",
+ "arslib",
  "hashbrown 0.14.5",
  "indicatif",
  "libc",
@@ -172,6 +174,7 @@ dependencies = [
 name = "ars_native"
 version = "0.14.0"
 dependencies = [
+ "arslib",
  "num-traits",
  "rand 0.8.6",
  "rand_chacha",
@@ -184,7 +187,7 @@ dependencies = [
 name = "ars_optimized_apex"
 version = "0.15.0"
 dependencies = [
- "ars_native",
+ "arslib",
  "num-traits",
  "rayon",
 ]
@@ -193,7 +196,7 @@ dependencies = [
 name = "ars_parallel_apex"
 version = "0.1.0"
 dependencies = [
- "ars_native",
+ "arslib",
  "pyo3",
  "rayon",
 ]
@@ -202,7 +205,7 @@ dependencies = [
 name = "ars_recursive"
 version = "0.1.0"
 dependencies = [
- "ars_native",
+ "arslib",
  "pyo3",
  "rayon",
 ]
@@ -211,7 +214,7 @@ dependencies = [
 name = "ars_recursive_parallel"
 version = "0.16.0"
 dependencies = [
- "ars_native",
+ "arslib",
  "num-traits",
  "rayon",
 ]
@@ -222,8 +225,8 @@ version = "1.0.0"
 dependencies = [
  "ars_gen_6_aero",
  "ars_master_benchmark",
- "ars_native",
  "ars_optimized_apex",
+ "arslib",
  "indicatif",
  "rand 0.8.6",
  "rand_chacha",
@@ -237,7 +240,7 @@ name = "ars_spatial_grid"
 version = "0.4.0"
 dependencies = [
  "ahash",
- "ars_native",
+ "arslib",
  "hashbrown 0.14.5",
  "pyo3",
  "rayon",
@@ -247,8 +250,8 @@ dependencies = [
 name = "ars_stream_microbatch"
 version = "0.19.0"
 dependencies = [
- "ars_native",
  "ars_optimized_apex",
+ "arslib",
  "crossbeam-channel",
  "rayon",
 ]
@@ -258,9 +261,9 @@ name = "ars_streaming_benchmark"
 version = "1.0.0"
 dependencies = [
  "ars_master_benchmark",
- "ars_native",
  "ars_optimized_apex",
  "ars_stream_microbatch",
+ "arslib",
  "chrono",
  "crossbeam-channel",
  "hdrhistogram",
@@ -276,7 +279,6 @@ dependencies = [
 name = "arslib"
 version = "0.4.0"
 dependencies = [
- "ars_native",
  "num-traits",
  "rand 0.8.6",
  "rand_chacha",

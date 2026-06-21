@@ -1,7 +1,7 @@
 #![allow(warnings)]
 use std::time::Instant;
 use ars_master_benchmark::Tracked;
-use ars_native::{ARSApex, ARSValue};
+use arslib::{ARSApex, ARSValue};
 use rand::Rng;
 use rand_chacha::ChaCha8Rng;
 use rand::SeedableRng;

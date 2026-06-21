@@ -1,11 +1,11 @@
 #![allow(warnings)]
-pub use ars_native::ARSValue;
+pub use arslib::ARSValue;
 use rayon::prelude::*;
 use std::mem::MaybeUninit;
 use std::ptr;
 
 // Metrics linkage
-pub use ars_native::{COMPARISONS, MOVES};
+pub use arslib::{COMPARISONS, MOVES};
 
 pub struct ARSMassivelyParallel;
 

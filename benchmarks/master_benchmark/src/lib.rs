@@ -5,7 +5,7 @@ use rand_distr::{Distribution, Exp, Normal};
 use std::fmt::Debug;
 use std::sync::atomic::Ordering;
 
-pub use ars_native::{ARSValue, COMPARISONS, MOVES};
+pub use arslib::{ARSValue, COMPARISONS, MOVES};
 
 pub mod hardware_profiler;
 pub use hardware_profiler::{HardwareMetrics, Profiler};

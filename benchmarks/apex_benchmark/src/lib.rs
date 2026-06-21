@@ -1,5 +1,5 @@
 #![allow(warnings)]
-pub use ars_native::{ARSValue, COMPARISONS, MOVES};
+pub use arslib::{ARSValue, COMPARISONS, MOVES};
 use std::fmt::Debug;
 use std::sync::atomic::Ordering;
 
