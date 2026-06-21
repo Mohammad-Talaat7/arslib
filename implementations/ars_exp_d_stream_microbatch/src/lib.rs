@@ -1,6 +1,6 @@
 #![allow(warnings)]
-pub use arslib::{ARSValue, COMPARISONS, MOVES};
 use ars_optimized_apex::ARSOptimizedApex;
+pub use arslib::{ARSValue, COMPARISONS, MOVES};
 use crossbeam_channel::Sender;
 use rayon::prelude::*;
 use std::collections::HashMap;

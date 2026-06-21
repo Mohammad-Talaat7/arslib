@@ -1,6 +1,6 @@
 #![allow(warnings)]
-use arslib::ARSValue;
 use ars_stream_microbatch::ARSStreamer;
+use arslib::ARSValue;
 use crossbeam_channel::{bounded, Sender};
 use hdrhistogram::Histogram;
 use rand::prelude::*;
