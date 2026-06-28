@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software or algorithm, please cite it using the following metadata."
+authors:
+  - family-names: "Ismael"
+    given-names: "Mohammad T."
+title: "Adaptive Range Sorting: A Hardware-Conscious Spatial Classification Framework"
+version: 1.0.0
+date-released: 2026-06-28
+url: "https://github.com/Mohammad-Talaat7/arslib"
+repository-code: "https://github.com/Mohammad-Talaat7/arslib"
+license: "MIT"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Ismael"
+      given-names: "Mohammad T."
+  title: "Adaptive Range Sorting: A Hardware-Conscious Spatial Classification Framework"
+  year: 2026
+  url: "https://github.com/Mohammad-Talaat7/arslib"
