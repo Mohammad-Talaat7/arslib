@@ -4,27 +4,39 @@
 [![Documentation](https://docs.rs/arslib/badge.svg)](https://docs.rs/arslib)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 
-`arslib` is a blazing-fast, cache-friendly, and highly parallel sorting library written in Rust. It implements the **Adaptive Range Sorting (ARS)** algorithm—specifically the 6th Generation "Aero" Architecture. ARS leverages spatial adjacency, cache-line buffering, and multi-threading to achieve extreme performance on modern CPU architectures.
+## What is ARS?
+`arslib` is a blazing-fast, cache-friendly, and highly parallel sorting library written in Rust. It implements the **Adaptive Range Sorting (ARS)** algorithm—specifically the 6th Generation "Aero" Architecture and the "Exp D" Streaming Architecture. 
 
-## Features
+Unlike traditional sorting algorithms that rely heavily on branch-intensive decision trees (like Quicksort or PDQsort), ARS treats sorting as a spatial classification problem. It maps elements to a mathematical spatial domain, enabling branchless classification, cache-line-aligned memory writes, and scalable multi-threading.
 
-- **Extreme Performance**: Outperforms traditional sorting algorithms (like Introsort and PDQsort) and often beats highly optimized Radix sorts (like RDST and Voracious) on large datasets.
-- **Cache-Locality Optimized**: Uses stack-allocated micro-buffers to sequentialize writes and maximize L1/L2 cache utilization.
-- **Parallel by Default**: Fully utilizes multi-core processors using `rayon`.
-- **Stable & Unstable Variants**: Choose between `arslib::sort` (unstable) and `arslib::sort_stable` (stable).
-- **Generic Support**: Easily sort any type by implementing the `ARSValue` trait to map your data to a spatial `u64` representation. Out-of-the-box support for primitives like `i32`, `i64`, `u64`, `f64`, and `String`.
+## Why was it developed?
+Modern CPUs process data significantly faster than main memory (DRAM) can serve it. Traditional comparison sorts suffer from two critical physical bottlenecks on modern hardware:
+1. **The Branch Misprediction Penalty:** Complex comparison trees cause the CPU pipeline to frequently stall, resulting in wasted cycles.
+2. **The Memory Wall:** Fragmented, random memory reads/writes cause high L3 cache misses, bottlenecking throughput on the memory bus.
 
-## Installation
+ARS was engineered specifically to bypass these hardware limitations. By trading a slightly larger memory footprint for a dramatic reduction in branch mispredictions, and utilizing write-combining buffers to optimize spatial locality, ARS can saturate memory bandwidth and achieve superior scalability on multi-core systems.
 
-Add this to your `Cargo.toml`:
+## Paper
+For a deep dive into the theoretical framework, algorithmic complexity, and hardware-level performance evaluation of the algorithm, please see the published research paper:
 
+> **[Adaptive Range Sorting: A Hardware-Conscious Spatial Classification Framework](paper/main.pdf)**
+
+## Performance Summary
+- **Extreme Throughput**: Outperforms standard library and state-of-the-art sorters (like PDQsort and IPS4o) on multi-core architectures, particularly on large datasets ($N > 10^7$).
+- **Distribution Robustness**: The Aero architecture utilizes a cache-resident 1024-entry quantile mapping table to maintain stable latency across skewed distributions (e.g., Gaussian, Zipfian) where linear spatial map functions traditionally fail.
+- **Cache-Conscious Memory Movement**: Employs software-managed write-combining buffers, significantly reducing Translation Lookaside Buffer (TLB) pressure and L3 cache thrashing.
+- **Streaming Ingestion**: The experimental "Exp D" architecture allows for concurrent, low-latency micro-batching without blocking ingestion pipelines.
+
+## Quick Start
+Add `arslib` to your `Cargo.toml`:
 ```toml
 [dependencies]
 arslib = "0.4.0"
 ```
 
-## Quick Start
+## Examples
 
+### Basic Usage
 ```rust
 use arslib;
 
@@ -42,9 +54,8 @@ fn main() {
 }
 ```
 
-## Custom Types
-
-To sort your own custom structs, simply implement the `ARSValue` trait. This trait requires a single method, `to_spatial_u64()`, which projects your type into a 1D uniform numeric space for histogram analysis.
+### Custom Types
+To sort your own custom structs, simply implement the `ARSValue` trait. This requires a single method, `to_spatial_u64()`, which projects your type into a 1D uniform numeric space.
 
 ```rust
 use arslib::ARSValue;
@@ -72,15 +83,25 @@ fn main() {
 }
 ```
 
-## How It Works
+## Documentation
+For complete API details, check out the documentation on [docs.rs](https://docs.rs/arslib).
 
-ARS (Aero Architecture) operates by performing an initial lightweight parallel analysis to determine dataset boundaries and characteristics. It then projects the data into a mapped spatial domain, dynamically allocates bins, and processes elements in chunks. By buffering elements locally per-thread and flushing them in cache-aligned blocks, it drastically reduces cache misses and main memory latency compared to traditional scattered writes.
+## Citation
+If you use this software or algorithm in your research, please cite it using the following metadata (or see the `CITATION.cff` and `paper/ars_citation.bib` files in the repository):
+
+```bibtex
+@article{ismael2026adaptive,
+  title={Adaptive Range Sorting: A Hardware-Conscious Spatial Classification Framework},
+  author={Ismael, Mohammad T.},
+  year={2026},
+  url={https://github.com/Mohammad-Talaat7/arslib},
+  note={Preprint / Source Code}
+}
+```
 
 ## License
-
 Licensed under either of
-
- * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+* MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
