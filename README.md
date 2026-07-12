@@ -17,7 +17,7 @@ Modern CPUs process data significantly faster than main memory (DRAM) can serve 
 1. **The Branch Misprediction Penalty:** Complex comparison trees cause the CPU pipeline to frequently stall, resulting in wasted cycles.
 2. **The Memory Wall:** Fragmented, random memory reads/writes cause high L3 cache misses, bottlenecking throughput on the memory bus.
 
-ARS was engineered specifically to bypass these hardware limitations. By trading a slightly larger memory footprint for a dramatic reduction in branch mispredictions, and utilizing write-combining buffers to optimize spatial locality, ARS can saturate memory bandwidth and achieve strong scalability in the evaluated workloads on multi-core systems.
+ARS was engineered specifically to bypass these hardware limitations. By trading a slightly larger memory footprint for a reduction in branch mispredictions, and utilizing write-combining buffers to optimize spatial locality, ARS can saturate memory bandwidth and achieve strong scalability in the evaluated workloads on multi-core systems.
 
 ## Paper
 
@@ -25,13 +25,13 @@ For a deep dive into the theoretical framework, algorithmic complexity, and hard
 
 > **[Adaptive Range Sorting: A Hardware-Conscious Spatial Classification Framework](paper/main.pdf)**
 
-## Performance Summary
+## Experimental Evaluation
 
 <p align="center">
   <img src="assets/graphs/entropy_response.png" alt="Entropy Response Graph" width="600"/>
 </p>
 
-- **Extreme Throughput**: Outperforms standard library and state-of-the-art sorters (like PDQsort and IPS4o) on multi-core architectures, particularly on large datasets ($N > 10^7$).
+- **Throughput**: Outperforms standard library and state-of-the-art sorters (like PDQsort and IPS4o) on multi-core architectures, particularly on large datasets ($N > 10^7$).
 - **Distribution Robustness**: The Aero architecture utilizes a cache-resident 1024-entry quantile mapping table to maintain stable latency across skewed distributions (e.g., Gaussian, Zipfian) where linear spatial map functions traditionally fail.
 - **Cache-Conscious Memory Movement**: Employs software-managed write-combining buffers, significantly reducing Translation Lookaside Buffer (TLB) pressure and L3 cache thrashing.
 - **Streaming Ingestion**: The experimental "Exp D" architecture allows for concurrent, low-latency micro-batching without blocking ingestion pipelines.

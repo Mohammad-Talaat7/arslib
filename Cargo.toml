@@ -15,7 +15,7 @@ members = [
     "benchmarks/apex_benchmark",
     "benchmarks/master_benchmark",
     "benchmarks/scalability_benchmark",
-    "benchmarks/streaming_benchmark",
+    "benchmarks/streaming_benchmark", "benchmarks/cross_language_suite/dataset_generator", "benchmarks/cross_language_suite/ars_harness",
 ]
 
 [package]

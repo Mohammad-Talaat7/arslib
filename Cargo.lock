@@ -132,6 +132,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "ars_harness"
+version = "0.1.0"
+dependencies = [
+ "arslib",
+]
+
+[[package]]
 name = "ars_hierarchical_staging"
 version = "0.17.0"
 dependencies = [
@@ -712,6 +719,16 @@ dependencies = [
  "bitflags 2.13.0",
  "libloading",
  "winapi",
+]
+
+[[package]]
+name = "dataset_generator"
+version = "0.1.0"
+dependencies = [
+ "ars_master_benchmark",
+ "rand 0.8.6",
+ "rand_chacha",
+ "rand_distr",
 ]
 
 [[package]]
